@@ -155,7 +155,6 @@ module Banco
             file.puts "\n"
             file.puts self.bottom_line
             file.puts "\n"
-            file.puts "code@s33d.co".rjust(54)
           end
           puts "\n\nfile saved as #{self.name}_summary.txt\n\n"
       end
@@ -172,7 +171,6 @@ module Banco
             file.puts "\n"
             file.puts self.bottom_line
             file.puts "\n"
-            file.puts "code@s33d.co".rjust(54)
           end
           puts "\n\nfile saved as #{self.name}_transactions.txt\n\n"
       end
