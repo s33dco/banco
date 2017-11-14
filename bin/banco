@@ -1,0 +1,51 @@
+#!/usr/bin/env ruby
+
+require_relative '../lib/banco/viewable'
+require_relative '../lib/banco/get_file'
+require_relative '../lib/banco/reader'
+require_relative '../lib/banco/reporter'
+
+module Banco
+	def self.starter
+		Viewable::prompt
+		file = GetFile.new
+		file.make_name
+		reader = file.name 
+		reader = Reader.new(file.csv_file_name, file.summary_name)
+		reader.read_in_csv_data
+		report = reader.report_name 
+		report = Reporter.new(reader.csv_file_name, reader.report_name, reader.all_from_csv)
+	end
+	Viewable::hello
+	report = starter
+	loop do
+		report.menu
+		answer = gets.chomp.downcase
+		case answer
+		when 'a'
+			print report.transactions_all
+		when 'o'
+			print report.transactions_out
+		when "i"
+			print report.transactions_in
+		when "m"
+			print report.money_out_summary
+		when "n"
+			print report.money_in_summary
+		when "b"
+			print report.bottom_line
+		when "l"
+			report = starter
+		when "s"
+			report.save_summary_to_file
+		when "t"
+			report.save_transactions_to_file
+		when "q"
+			break
+		else
+			report.menu
+		end
+	end
+	Viewable::farewell
+end
+
