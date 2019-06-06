@@ -2,7 +2,7 @@ require 'banco/transaction'
 
 module Banco
 	describe Transaction do
-		before do 
+		before do
 			@trans1 = Transaction.new("12/01/17","some transaction", "credit", "57.91", "0.00", "1")
 			@trans2 = Transaction.new("13/01/17","some other transaction", "debit", "0.00", "57.91",'2')
 		end
@@ -23,7 +23,7 @@ module Banco
 		it "Should have a type string upcased and 8 characters long" do
 			expect(@trans2.type).to eq("DEBIT   ")
 		end
-		
+
 		it "Should have a date string" do
 			expect(@trans1.date).to eq("12/01/17")
 		end

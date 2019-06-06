@@ -34,7 +34,7 @@ module Banco
       def money_out_summary
         print_summary("Outgoings", self.outgoings, self.outgoing_total)
       end
-        
+
       def money_in_summary
         print_summary("Incomings", self.incomings, self.incoming_total)
       end
@@ -45,7 +45,7 @@ module Banco
         output << "\n"
         output << "All transactions:\n"
         output << "#{facts(self.all_transactions)}\n\n"
-        self.all_transactions.each do |trans| 
+        self.all_transactions.each do |trans|
           if trans.moneyout == 0
             output << "#{trans} + #{to_pounds(trans.moneyin)}\n"
           else
@@ -53,7 +53,7 @@ module Banco
           end
         end
         output << dashes
-        output << "\n\n"  
+        output << "\n\n"
       end
 
       def transactions_out
@@ -84,7 +84,7 @@ module Banco
         output << "\n"
         output << "#{kind} Summary, totals from #{hash.size} different sources :\n"
         output << "#{date_range}\n"
-        hash.sort_by{|k,v| v}.reverse.each{|k,v| output << "#{k} #{to_pounds(v)}\n".rjust(54)}
+        hash.sort_by{|_k,v| v}.reverse.each{|k,v| output << "#{k} #{to_pounds(v)}\n".rjust(54)}
         output << "\n"
         output << "Total #{kind}: #{to_pounds(total)}\n".rjust(54)
         output << dashes
@@ -141,7 +141,7 @@ module Banco
           puts "(use 'test.csv' for the test file)".center(54)
           puts "or 'q' to quit...".center(55)
           puts "\n\n"
-          end 
+          end
 
       def save_summary_to_file(to_file="#{self.name}_summary.txt")
           File.open(to_file, "w") do |file|
