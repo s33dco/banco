@@ -2,7 +2,7 @@ module Banco
 	class GetFile
 		attr_reader :name, :csv_file_name, :summary_name
 
-		def make_name
+		def initialize
 			@csv_file_name = gets.chomp.downcase
 			if @csv_file_name == 'q'
 				Viewable::farewell
@@ -25,6 +25,7 @@ module Banco
 				make_name
 			end
 		end
+
 	end
 end
 
