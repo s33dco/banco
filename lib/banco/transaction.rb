@@ -13,7 +13,7 @@ module Banco
 		end
 
 		def convert(money)
-			money.nil? ? money = BigDecimal('0') : money = BigDecimal(money)
+			money.nil? ?  BigDecimal('0') : BigDecimal(money)
 	  end
 
 		def to_s
