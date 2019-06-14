@@ -1,11 +1,11 @@
 Welcome to Banco !
 
-Banco has been developed to summarize statements downloaded from your bank. 
+Banco has been developed to summarize statements downloaded from your bank.
 Install as a Rubygem, navigate to the directory your .csv files are in and execute from the command line with 'banco'.
 
-Banco will only accept comma seperated value files (.csv) and will produce a summary for the period uploaded from the file. 
+Banco will only accept comma seperated value files (.csv) and will produce a summary for the period uploaded from the file.
 
-Remove the header line from your downloaded bank statement, ensure the columns are ordered date, description, type of charge, money in an money out from left to right, any columns right of the fifth will be ignored. Banco will total the incoming & outgoing transactions for the period. Reporting the bottom line aswell as summing up the values for similar transactions. This is achieved by matching the description name, currently set at the first 9 characters of the string, you can change this to be more or less exact.
+Remove the header line from your downloaded bank statement, ensure the columns are ordered date, description, type of charge, money in an money out from left to right, any columns right of the fifth will be ignored. Banco will total the incoming & outgoing transactions for the period. Reporting the bottom line aswell as summing up the values for similar transactions. This is achieved by matching the description name, currently set at the first 9 characters of the string, (:total_outgoing :total_incoming - class Reporter), you can change this to be more or less exact.
 
 Hope your numbers are positive !
 https://github.com/s33dco/banco

@@ -40,7 +40,7 @@ module Banco
     end
 
     def transactions_all
-      output = output_s = ""
+      output = ""
       output << dashes
       output << "\n"
       output << "All transactions:\n"
@@ -57,7 +57,7 @@ module Banco
     end
 
     def transactions_out
-      output = output_s = ""
+      output = ""
       output << dashes
       output << "\n"
       output << "Outgoing Transactions:\n"
@@ -68,7 +68,7 @@ module Banco
     end
 
     def transactions_in
-      output = output_s = ""
+      output = ""
       output << dashes
       output << "\n"
       output << "Incoming Transactions :\n"
@@ -79,7 +79,7 @@ module Banco
     end
 
     def print_summary(kind, hash, total)
-      output = output_s = ""
+      output = ""
       output << dashes
       output << "\n"
       output << "#{kind} Summary, totals from #{hash.size} different sources :\n"
@@ -92,7 +92,7 @@ module Banco
     end
 
     def bottom_line
-      output = output_s = ""
+      output = ""
       output << dashes
       output << "\n"
       output << "#{facts(self.all_transactions)}".rjust(54)
