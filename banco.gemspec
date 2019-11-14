@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name         = 'banco'
-  s.version      = '1.0.2'
+  s.version      = '1.0.3'
   s.licenses     = ['MIT']
   s.summary      = "Make your bank's .csv file statement more readable"
   s.description  = File.read(File.join(File.dirname(__FILE__), 'README'))
