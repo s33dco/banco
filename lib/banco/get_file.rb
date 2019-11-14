@@ -6,24 +6,28 @@ module Banco
     def initialize
       @csv_file_name = gets.chomp.downcase
       if @csv_file_name == 'q'
-        Viewable.farewell
+        Viewable::farewell
         exit
       else
         file_checker_cleaner(@csv_file_name)
         @name = @csv_file_name.split('.').first
-        @doctype = @csv_file_name.split('.').last
-        @summary_name = @name
-        @csv_file_name
+        make_name
       end
+    end
+
+    def make_name
+      @name = @csv_file_name.split('.').first
+      @doctype = @csv_file_name.split('.').last
+      @summary_name = @name
+      @csv_file_name
     end
 
     def file_checker_cleaner(filename)
       if filename =~ /([^\s]+(\.csv)$)/
         puts "\nloading #{filename}..."
       else
-        puts "#{filename} won't work !".center(54)
-        puts "try again or 'q' to exit".center(54)
-        make_name
+        puts "#{filename} isn't a valid file for Banco !".center(54)
+        throw
       end
     end
   end

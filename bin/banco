@@ -7,16 +7,20 @@ require_relative '../lib/banco/reporter'
 
 module Banco
   def self.starter
-    Viewable.prompt
-    file = GetFile.new
-    reader = Reader.new(file.csv_file_name, file.summary_name)
-    reader.read_in_csv_data
-    Reporter.new(reader.csv_file_name, reader.report_name, reader.all_from_csv)
+    Viewable::prompt
+    begin
+      file = GetFile.new
+      reader = Reader.new(file.csv_file_name, file.summary_name)
+      reader.read_in_csv_data
+      Reporter.new(reader.csv_file_name, reader.report_name, reader.all_from_csv)
+    rescue
+      puts "try again or 'q' to exit".center(54)
+      retry
+    end
   end
 
-  Viewable.hello
+  Viewable::hello
   report = starter
-  report.inspect
   loop do
     report.menu
     answer = gets.chomp.downcase
@@ -45,5 +49,5 @@ module Banco
       report.menu
     end
   end
-  Viewable.farewell
+  Viewable::farewell
 end

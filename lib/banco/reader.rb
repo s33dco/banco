@@ -22,27 +22,27 @@ module Banco
         all_from_csv << Transaction.new(row[0], row[1], row[2], row[3], row[4], @csv_row_count)
         @csv_row_count += 1
       end
-    rescue ArgumentError => e
-      non_numeric_in_csv(e, @csv_row_count)
-      puts "sorted ? ('y' to continue or 'q' to exit)".rjust(54)
-      input = gets.chomp.downcase
-      @all_from_csv = []
-      input == 'y' ? retry : Viewable.farewell
-    rescue Errno::ENOENT => e
-      puts "Can't find file #{@csv_file_name} - have another go or (q) quit\n\n"
-      loop do
+      rescue ArgumentError => e
+        non_numeric_in_csv(e, @csv_row_count)
+        puts "sorted ? ('y' to continue or 'q' to exit)".rjust(54)
         input = gets.chomp.downcase
-        case input
-        when 'q'
-          Viewable.farewell
-          exit
-        when /([^\s]+(\.csv)$)/
-          @csv_file_name = input
-          break
-        else
-          puts "\ninvalid file - try again or 'q' to quit\n\n"
+        @all_from_csv = []
+        input == 'y' ? retry : Viewable.farewell
+      rescue Errno::ENOENT => e
+        puts "Can't find file #{@csv_file_name} - have another go or (q) quit\n\n"
+        loop do
+          input = gets.chomp.downcase
+          case input
+          when 'q'
+            Viewable.farewell
+            exit
+          when /([^\s]+(\.csv)$)/
+            @csv_file_name = input
+            break
+          else
+            puts "\ninvalid file - try again or 'q' to quit\n\n"
           end
-      end
+        end
       retry
     end
 
