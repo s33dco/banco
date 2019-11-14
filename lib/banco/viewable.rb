@@ -118,7 +118,7 @@ module Banco
       puts '*'.center(55, '*')
       puts '  Banco  '.center(55, '*')
       puts '  hope your numbers were positive  '.center(55, '*')
-      puts '   code@s33d.co   '.center(55, '*')
+      puts '  ♥️  code@s33d.co   '.center(56, '*')
       puts '*'.center(55, '*')
       puts "\n\n\n"
       exit
@@ -156,7 +156,7 @@ module Banco
         file.puts "\n"
         file.puts bottom_line
         file.puts "\n"
-        file.puts 'code@s33d.co'.rjust(54)
+        file.puts '♥️ code@s33d.co'.rjust(54)
       end
       puts "\n\nfile saved as #{name}_summary.txt\n\n"
     end
@@ -173,7 +173,7 @@ module Banco
         file.puts "\n"
         file.puts bottom_line
         file.puts "\n"
-        file.puts 'code@s33d.co'.rjust(54)
+        file.puts '♥️ code@s33d.co'.rjust(54)
       end
       puts "\n\nfile saved as #{name}_transactions.txt\n\n"
     end
