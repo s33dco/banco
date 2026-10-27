@@ -1,14 +1,16 @@
 # frozen_string_literal: true
 
-require 'bigdecimal'
 require 'banco/reporter'
 require 'banco/reader'
+
 module Banco
   describe Reporter do
+    let(:test_csv) { File.expand_path('../fixtures/test.csv', __dir__) }
+
     before do
-      @testreader = Banco::Reader.new('test.csv', 'test')
-      @testreader.read_in_csv_data
-      @tester = described_class.new('test.csv', 'test', @testreader.all_from_csv)
+      reader = Reader.new(test_csv, 'test')
+      reader.read_in_csv_data
+      @tester = described_class.new(test_csv, 'test', reader.all_from_csv)
     end
 
     it 'has a GROUPING_PREFIX_LENGTH constant of 9' do
@@ -16,48 +18,48 @@ module Banco
     end
 
     it 'does not mutate the transactions array passed to it' do
-      reader = Banco::Reader.new('test.csv', 'test')
+      reader = Banco::Reader.new(test_csv, 'test')
       reader.read_in_csv_data
       transactions = reader.all_from_csv
       original_size = transactions.size
-      described_class.new('test.csv', 'test', transactions)
+      described_class.new(test_csv, 'test', transactions)
       expect(transactions.size).to eq(original_size)
     end
 
-    it 'removes transactions with zero values (moneyin / moneyout)' do
+    it 'removes zero-pence rows, leaving 8 transactions' do
       expect(@tester.all_transactions.size).to eq(8)
     end
 
-    it 'produces an array of incoming transactions' do
+    it 'produces an array of 4 incoming transactions' do
       expect(@tester.incoming_trans.size).to eq(4)
     end
 
-    it 'produces an array of outgoing transactions' do
+    it 'produces an array of 4 outgoing transactions' do
       expect(@tester.outgoing_trans.size).to eq(4)
     end
 
-    it 'produces a hash of outgoing transactions' do
+    it 'produces a hash of 2 outgoing buckets' do
       expect(@tester.outgoings.size).to eq(2)
     end
 
-    it 'produces a hash of incoming transactions' do
+    it 'produces a hash of 2 incoming buckets' do
       expect(@tester.incomings.size).to eq(2)
     end
 
-    it 'sums incoming transactions by matching description string' do
-      expect(@tester.incomings['INCOMING2']).to eq(BigDecimal('91.67'))
+    it 'sums incoming transactions by description prefix (pence)' do
+      expect(@tester.incomings['INCOMING2']).to eq(9167)
     end
 
-    it 'sums outgoing transactions by matching description string' do
-      expect(@tester.outgoings['OUTGOING2']).to eq(BigDecimal('91.34'))
+    it 'sums outgoing transactions by description prefix (pence)' do
+      expect(@tester.outgoings['OUTGOING2']).to eq(9134)
     end
 
-    it 'sums total incoming transactions' do
-      expect(@tester.incoming_total).to eq(BigDecimal('160.79'))
+    it 'sums total incoming (pence)' do
+      expect(@tester.incoming_total).to eq(16_079)
     end
 
-    it 'sums total outgoing transactions' do
-      expect(@tester.outgoing_total).to eq(BigDecimal('160.46'))
+    it 'sums total outgoing (pence)' do
+      expect(@tester.outgoing_total).to eq(16_046)
     end
   end
 end

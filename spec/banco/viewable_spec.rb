@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'bigdecimal'
 require 'banco/reporter'
 require 'banco/reader'
 
@@ -15,17 +14,17 @@ module Banco
       @reporter = Reporter.new(test_csv, 'test', reader.all_from_csv)
     end
 
-    describe '#to_pounds' do
-      it 'formats a BigDecimal as a right-aligned pounds string' do
-        expect(@reporter.to_pounds(BigDecimal('12.34'))).to eq('£     12.34')
+    describe '#format_pence' do
+      it 'formats pence as a right-aligned pounds string' do
+        expect(@reporter.format_pence(1234)).to eq('£     12.34')
       end
 
-      it 'truncates to 2 decimal places without rounding' do
-        expect(@reporter.to_pounds(BigDecimal('9.999'))).to eq('£      9.99')
+      it 'formats an odd pence amount correctly' do
+        expect(@reporter.format_pence(999)).to eq('£      9.99')
       end
 
-      it 'formats zero correctly' do
-        expect(@reporter.to_pounds(BigDecimal('0'))).to eq('£      0.00')
+      it 'formats zero pence correctly' do
+        expect(@reporter.format_pence(0)).to eq('£      0.00')
       end
     end
 

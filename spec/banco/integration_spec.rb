@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'bigdecimal'
 require 'banco/reader'
 require 'banco/reporter'
 
@@ -37,17 +36,16 @@ module Banco
       expect(@report.incomings.size).to eq(2)
     end
 
-    it 'totals outgoing correctly' do
-      expect(@report.outgoing_total).to eq(BigDecimal('160.46'))
+    it 'totals outgoing correctly (pence)' do
+      expect(@report.outgoing_total).to eq(16_046)
     end
 
-    it 'totals incoming correctly' do
-      expect(@report.incoming_total).to eq(BigDecimal('160.79'))
+    it 'totals incoming correctly (pence)' do
+      expect(@report.incoming_total).to eq(16_079)
     end
 
-    it 'surplus is incoming minus outgoing' do
-      surplus = @report.incoming_total - @report.outgoing_total
-      expect(surplus).to eq(BigDecimal('0.33'))
+    it 'surplus is incoming minus outgoing (pence)' do
+      expect(@report.incoming_total - @report.outgoing_total).to eq(33)
     end
 
     it 'date range spans the statement period' do
