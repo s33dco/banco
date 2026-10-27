@@ -6,10 +6,13 @@ require 'banco/reader'
 
 module Banco
   describe Viewable do
+    let(:test_csv)    { File.expand_path('../../fixtures/test.csv', __FILE__) }
+    let(:deficit_csv) { File.expand_path('../../fixtures/deficit.csv', __FILE__) }
+
     before do
-      reader = Reader.new('test.csv', 'test')
+      reader = Reader.new(test_csv, 'test')
       reader.read_in_csv_data
-      @reporter = Reporter.new('test.csv', 'test', reader.all_from_csv)
+      @reporter = Reporter.new(test_csv, 'test', reader.all_from_csv)
     end
 
     describe '#to_pounds' do
@@ -54,6 +57,13 @@ module Banco
 
       it 'shows SURPLUS when incomings exceed outgoings' do
         expect(@reporter.bottom_line).to include('SURPLUS')
+      end
+
+      it 'shows DEFICIT when outgoings exceed incomings' do
+        reader = Reader.new(deficit_csv, 'deficit test')
+        reader.read_in_csv_data
+        deficit_reporter = Reporter.new(deficit_csv, 'deficit test', reader.all_from_csv)
+        expect(deficit_reporter.bottom_line).to include('DEFICIT')
       end
     end
 

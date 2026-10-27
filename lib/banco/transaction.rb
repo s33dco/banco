@@ -9,8 +9,8 @@ module Banco
       @moneyin = convert(moneyin)
       @moneyout = convert(moneyout)
       @date = date_string
-      @description = format('%-22.22s', description.upcase.to_s)
-      @type = format('%-8.8s', type.upcase.to_s)
+      @description = format('%-22.22s', description.to_s.upcase)
+      @type = format('%-8.8s', type.to_s.upcase)
     end
 
     def convert(money)

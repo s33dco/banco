@@ -10,17 +10,19 @@ module Banco
       @trans2 = Transaction.new('13/01/17', 'some other transaction', 'debit', '0.00', '57.91', '2')
     end
 
-    # it "Should convert money in values to pence" do
-    #    expect(@trans1.moneyin).to eq(5791)
-    # end
-
-    # it "Should convert money out values to pence" do
-    #   expect(@trans2.moneyout).to eq(5791)
-    # end
-
     it 'Should have a description string of 22 characters (upcase)' do
       expect(@trans2.description).to eq('SOME OTHER TRANSACTION')
       expect(@trans1.description).to eq('SOME TRANSACTION      ')
+    end
+
+    it 'truncates description longer than 22 characters' do
+      long = Transaction.new('12/01/17', 'A very long description that exceeds the limit', 'credit', '1.00', nil, '3')
+      expect(long.description.length).to eq(22)
+      expect(long.description).to eq('A VERY LONG DESCRIPTIO')
+    end
+
+    it 'handles nil type without raising' do
+      expect { Transaction.new('12/01/17', 'test', nil, '10.00', nil, '1') }.not_to raise_error
     end
 
     it 'Should have a type string upcased and 8 characters long' do
