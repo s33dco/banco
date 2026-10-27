@@ -26,7 +26,7 @@ module Banco
       @incoming_trans = []
       @outgoings = Hash.new(0)
       @incomings = Hash.new(0)
-      puts 'formating data...'
+      puts 'formatting data...'
       remove_blank_lines
       split_in_out
       total_outgoing
