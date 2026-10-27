@@ -18,7 +18,8 @@ Navigate to the directory containing your CSV file and run:
 banco
 ```
 
-Banco prompts for the filename, reads the data, then presents an interactive menu:
+Banco scans for CSV files, lets you pick one (or pass `--file`), then
+presents an interactive menu:
 
 | Key | Action |
 |-----|--------|
@@ -33,25 +34,85 @@ Banco prompts for the filename, reads the data, then presents an interactive men
 | `l` | Load a new file |
 | `q` | Quit |
 
-## CSV format
+Use `--format json` or `--format csv` for pipe-friendly output (no menu, exits after printing).
 
-Banco expects a CSV file with **no header row** and columns in this order:
+## CLI flags
 
-| Column | Content |
-|--------|---------|
-| 1 | Date |
+| Flag | Default | Description |
+|------|---------|-------------|
+| `-f`, `--file FILE` | — | CSV file to analyse |
+| `-F`, `--format FORMAT` | `text` | Output format: `text` / `json` / `csv` |
+| `-b`, `--bank NAME` | `legacy` | Bank CSV format (see Bank formats below) |
+| `-p`, `--prefix-length N` | `9` | Description prefix length for grouping |
+| `-H`, `--header` | off | Skip first row as header |
+| `--from DATE` | — | Filter from date (format matches bank format) |
+| `--to DATE` | — | Filter to date (format matches bank format) |
+| `-v`, `--version` | — | Print version and exit |
+| `-h`, `--help` | — | Show help and exit |
+
+### Examples
+
+```sh
+# Summarise all transactions in statements.csv
+banco --file statements.csv
+
+# September only, JSON output
+banco --file statements.csv --from 01/09/17 --to 30/09/17 --format json
+
+# Skip header row, group by first 6 characters
+banco --file export.csv --header --prefix-length 6
+```
+
+## Bank formats
+
+| Name | Date format | Columns | Notes |
+|------|-------------|---------|-------|
+| `legacy` | `%d/%m/%y` | date, description, type, credit, debit | Default — Barclays-style |
+| `split_columns` | `%d/%m/%Y` | date, description, type, amount | Single amount column |
+| `signed_amount` | `%Y-%m-%d` | date, description, amount | No type column |
+
+### Custom formats
+
+Define your own format in `~/.banco/formats.rb`:
+
+```ruby
+Banco::BankFormat.define(:my_bank) do
+  date_column        0
+  description_column 2
+  type_column        1
+  credit_column      3
+  debit_column       4
+  date_format        '%Y-%m-%d'
+end
+```
+
+Then use it with `banco --bank my_bank`.
+
+## CSV format (legacy)
+
+Banco's default (`--bank legacy`) expects **no header row** and columns in this order:
+
+| # | Content |
+|---|---------|
+| 1 | Date (`dd/mm/yy`) |
 | 2 | Description |
 | 3 | Type |
 | 4 | Money in |
 | 5 | Money out |
 
-Any columns beyond the fifth are ignored.
+Pass `--header` if your export includes a header row. Any columns beyond the fifth are ignored.
 
-If your export includes a header row, pass `skip_header: true` when constructing `Banco::Reader` programmatically, or edit the file to remove the header before running the CLI.
+## Where metaprogramming was used — and where it was not
 
-## How it works
+**Used:**
 
-`Reporter` groups similar transactions by the first `GROUPING_PREFIX_LENGTH` characters (default 9) of the description, totalling incoming and outgoing amounts separately. The bottom-line report shows the net surplus or deficit for the period.
+- **`inherited` hook** (`Formatter::Base`) — each formatter subclass self-registers in a central registry. `--format` validation and `--help` output both read from the same registry, so they can never drift apart.
+- **`instance_eval`** (`BankFormat.define`) — builds a column-mapping configuration object from a concise DSL block. The block runs in the context of a fresh `BankFormat` instance, so DSL methods (`date_column`, `credit_column`, etc.) are just setters. No `method_missing`, no `define_method`, no runtime method generation.
+
+**Deliberately not used:**
+
+- **`method_missing`** for `report.groceries`-style accessors — fragile, hard to test, no editor support.
+- **`define_method`** to generate per-category display methods — same reasons; a Hash already models the grouped data cleanly.
 
 ## Development
 
@@ -59,8 +120,10 @@ If your export includes a header row, pass `skip_header: true` when constructing
 git clone https://github.com/s33dco/banco
 cd banco
 bundle install
-bundle exec rake spec
+bundle exec rake   # runs specs + RuboCop
 ```
+
+CI runs the full suite against Ruby 3.2, 3.3, and 3.4 on every push.
 
 ## Licence
 
