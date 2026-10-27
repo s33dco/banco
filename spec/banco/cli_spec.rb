@@ -71,5 +71,30 @@ module Banco
         expect { described_class.parse(['-h']) }.to raise_error(SystemExit)
       end
     end
+
+    describe '.filter_date' do
+      it 'returns nil when the value is nil' do
+        expect(described_class.filter_date(nil, '%d/%m/%y')).to be_nil
+      end
+
+      it 'parses a value that matches the format' do
+        expect(described_class.filter_date('01/09/17', '%d/%m/%y')).to eq(Date.new(2017, 9, 1))
+      end
+
+      it 'exits on a 4-digit year against a 2-digit-year format' do
+        allow(described_class).to receive(:warn)
+        expect { described_class.filter_date('01/09/2017', '%d/%m/%y') }.to raise_error(SystemExit)
+      end
+
+      it 'exits on an out-of-range date' do
+        allow(described_class).to receive(:warn)
+        expect { described_class.filter_date('31/13/17', '%d/%m/%y') }.to raise_error(SystemExit)
+      end
+
+      it 'exits on unparseable junk' do
+        allow(described_class).to receive(:warn)
+        expect { described_class.filter_date('banana', '%d/%m/%y') }.to raise_error(SystemExit)
+      end
+    end
   end
 end

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'optparse'
+require 'date'
 require 'banco/version'
 require 'banco/bank_format'
 require 'banco/formatter/base'
@@ -15,6 +16,22 @@ module Banco
       parser = build_parser(options)
       parser.parse!(argv)
       options
+    end
+
+    # Parse a --from/--to value strictly against the bank's date format.
+    # Rejects values that don't fully match (e.g. a 4-digit year against a
+    # 2-digit-year format) or that are out of range, exiting with a message
+    # rather than silently misparsing or crashing with a backtrace.
+    def self.filter_date(value, fmt)
+      return nil unless value
+
+      parts = Date._strptime(value, fmt)
+      raise Date::Error if parts.nil? || parts[:leftover]
+
+      Date.strptime(value, fmt)
+    rescue Date::Error
+      warn "Invalid date #{value.inspect} — expected a date matching #{fmt}"
+      exit 1
     end
 
     def self.hello

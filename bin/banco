@@ -10,8 +10,8 @@ module Banco
 
   fmt_class = Formatter::Base.for_name(options[:format])
   bank_fmt  = BankFormat[options[:bank]]
-  from_date = options[:from] ? Date.strptime(options[:from], bank_fmt.date_fmt) : nil
-  to_date   = options[:to]   ? Date.strptime(options[:to],   bank_fmt.date_fmt) : nil
+  from_date = CLI.filter_date(options[:from], bank_fmt.date_fmt)
+  to_date   = CLI.filter_date(options[:to],   bank_fmt.date_fmt)
   transactions = Parser.new(options[:file], skip_header: options[:skip_header],
                                             bank_format: bank_fmt).parse
   report = Grouper.new(transactions, prefix_length: options[:prefix_length],
