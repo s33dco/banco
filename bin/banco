@@ -47,8 +47,10 @@ module Banco
       puts "\n\nfile saved as #{path}\n\n"
     when 'l'
       options[:file] = FilePicker.pick
-      transactions = Parser.new(options[:file], skip_header: options[:skip_header]).parse
-      report = Grouper.new(transactions, prefix_length: options[:prefix_length]).call
+      transactions = Parser.new(options[:file], skip_header: options[:skip_header],
+                                                bank_format: bank_fmt).parse
+      report = Grouper.new(transactions, prefix_length: options[:prefix_length],
+                                         from: from_date, to: to_date).call
       fmt = fmt_class.new(report)
     when 'q' then break
     else print fmt.menu

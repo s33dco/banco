@@ -53,8 +53,8 @@ module Banco
             options[:prefix_length] = v
           end
           opts.on('-H', '--header', 'Skip first row as header') { options[:skip_header] = true }
-          opts.on('--from DATE', 'Filter from date (dd/mm/yy)') { |v| options[:from] = v }
-          opts.on('--to DATE', 'Filter to date (dd/mm/yy)') { |v| options[:to] = v }
+          opts.on('--from DATE', 'Filter from date (format matches --bank)') { |v| options[:from] = v }
+          opts.on('--to DATE', 'Filter to date (format matches --bank)') { |v| options[:to] = v }
           opts.on('-F', '--format FORMAT', fmt_names, "Output format (#{fmt_names.join('/')})") do |v|
             options[:format] = v
           end
