@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'bigdecimal'
 require 'banco/reporter'
 require 'banco/reader'
 module Banco
@@ -37,19 +38,19 @@ module Banco
     end
 
     it 'should sum incoming transactions by matching description string' do
-      expect(@tester.incomings['INCOMING2']).to eq(183.34)
+      expect(@tester.incomings['INCOMING2']).to eq(BigDecimal('183.34'))
     end
 
     it 'should sum outgoing transactions by matching description string' do
-      expect(@tester.outgoings['OUTGOING2']).to eq(182.68)
+      expect(@tester.outgoings['OUTGOING2']).to eq(BigDecimal('182.68'))
     end
 
     it 'should sum total incoming transactions' do
-      expect(@tester.incoming_total).to eq(321.58)
+      expect(@tester.incoming_total).to eq(BigDecimal('321.58'))
     end
 
     it 'should sum total outgoing transactions' do
-      expect(@tester.outgoing_total).to eq(320.92)
+      expect(@tester.outgoing_total).to eq(BigDecimal('320.92'))
     end
   end
 end

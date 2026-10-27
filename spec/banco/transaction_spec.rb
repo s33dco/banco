@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'bigdecimal'
 require 'banco/transaction'
 
 module Banco
@@ -38,12 +39,12 @@ module Banco
       expect(@trans1.to_s).to eq('12/01/17 CREDIT   SOME TRANSACTION      ')
     end
 
-    it 'convert empty strings in money columns to integers' do
-      expect(@trans1.moneyout).to eq(0)
+    it 'converts nil money values to BigDecimal zero' do
+      expect(@trans1.moneyout).to eq(BigDecimal('0'))
     end
 
-    it 'convert empty strings in money columns to integers' do
-      expect(@trans2.moneyin).to eq(0)
+    it 'converts nil money values to BigDecimal zero' do
+      expect(@trans2.moneyin).to eq(BigDecimal('0'))
     end
   end
 end
