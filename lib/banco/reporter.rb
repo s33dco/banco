@@ -8,6 +8,8 @@ module Banco
   class Reporter
     include Viewable
 
+    GROUPING_PREFIX_LENGTH = 9
+
     attr_reader :all_transactions,
                 :outgoing_trans,
                 :incoming_trans,
@@ -43,12 +45,12 @@ module Banco
     end
 
     def total_outgoing
-      @outgoing_trans.each { |trans| @outgoings[trans.description[0..8]] += trans.moneyout }
+      @outgoing_trans.each { |trans| @outgoings[trans.description[0, GROUPING_PREFIX_LENGTH]] += trans.moneyout }
       @outgoing_total = @outgoings.values.map.reduce(:+)
     end
 
     def total_incoming
-      @incoming_trans.each { |trans| @incomings[trans.description[0..8]] += trans.moneyin }
+      @incoming_trans.each { |trans| @incomings[trans.description[0, GROUPING_PREFIX_LENGTH]] += trans.moneyin }
       @incoming_total = @incomings.values.map.reduce(:+)
     end
   end

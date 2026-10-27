@@ -11,6 +11,10 @@ module Banco
       @tester = Banco::Reporter.new('test.csv', 'test', @testreader.all_from_csv)
     end
 
+    it 'has a GROUPING_PREFIX_LENGTH constant of 9' do
+      expect(Reporter::GROUPING_PREFIX_LENGTH).to eq(9)
+    end
+
     it 'should remove transactions with zero values (moneyin / moneyout)' do
       expect(@tester.all_transactions.size).to eq(8)
     end
