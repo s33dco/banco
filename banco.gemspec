@@ -5,10 +5,10 @@ Gem::Specification.new do |s|
   s.version      = '1.0.3'
   s.licenses     = ['MIT']
   s.summary      = "Make your bank's .csv file statement more readable"
-  s.description  = File.read(File.join(File.dirname(__FILE__), 'README'))
+  s.description  = File.read(File.join(File.dirname(__FILE__), 'README.md'))
   s.author       = 's33d'
   s.email        = 'code@s33d.co'
-  s.files = Dir['{bin,lib,spec}/**/*'] + %w[LICENSE README]
+  s.files = Dir['{bin,lib,spec}/**/*'] + %w[LICENSE README.md]
   s.homepage = 'https://github.com/s33dco/banco'
   s.executables   = ['banco']
   s.required_ruby_version = '>= 3.2'
