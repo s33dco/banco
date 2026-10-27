@@ -8,36 +8,47 @@ module Banco
   options = CLI.parse
   options[:file] ||= FilePicker.pick
 
-  Viewable.hello
+  fmt_class = Formatter::Base.for_name(options[:format])
+  transactions = Parser.new(options[:file], skip_header: options[:skip_header]).parse
+  report = Grouper.new(transactions, prefix_length: options[:prefix_length]).call
+  fmt = fmt_class.new(report)
 
-  reader = Reader.new(options[:file], File.basename(options[:file], '.csv'),
-                      skip_header: options[:skip_header])
-  reader.read_in_csv_data
-  report = Reporter.new(options[:file], File.basename(options[:file], '.csv'),
-                        reader.all_from_csv)
+  unless options[:format] == 'text'
+    puts fmt.call
+    exit
+  end
+
+  CLI.hello
 
   loop do
-    report.menu
-    answer = gets.chomp.downcase
+    print fmt.menu
+    answer = $stdin.gets.chomp.downcase
     case answer
-    when 'a' then print report.transactions_all
-    when 'o' then print report.transactions_out
-    when 'i' then print report.transactions_in
-    when 'm' then print report.money_out_summary
-    when 'n' then print report.money_in_summary
-    when 'b' then print report.bottom_line
+    when 'a' then print fmt.transactions_all
+    when 'o' then print fmt.transactions_out
+    when 'i' then print fmt.transactions_in
+    when 'm' then print fmt.money_out_summary
+    when 'n' then print fmt.money_in_summary
+    when 'b' then print fmt.bottom_line
+    when 's'
+      name = File.basename(options[:file], '.csv')
+      path = "#{name}_summary.txt"
+      fmt.save_summary_to_file(path, csv_name: options[:file])
+      puts "\n\nfile saved as #{path}\n\n"
+    when 't'
+      name = File.basename(options[:file], '.csv')
+      path = "#{name}_transactions.txt"
+      fmt.save_transactions_to_file(path, csv_name: options[:file])
+      puts "\n\nfile saved as #{path}\n\n"
     when 'l'
       options[:file] = FilePicker.pick
-      reader = Reader.new(options[:file], File.basename(options[:file], '.csv'),
-                          skip_header: options[:skip_header])
-      reader.read_in_csv_data
-      report = Reporter.new(options[:file], File.basename(options[:file], '.csv'),
-                            reader.all_from_csv)
-    when 's' then report.save_summary_to_file
-    when 't' then report.save_transactions_to_file
+      transactions = Parser.new(options[:file], skip_header: options[:skip_header]).parse
+      report = Grouper.new(transactions, prefix_length: options[:prefix_length]).call
+      fmt = fmt_class.new(report)
     when 'q' then break
-    else report.menu
+    else print fmt.menu
     end
   end
-  Viewable.farewell
+
+  CLI.farewell
 end

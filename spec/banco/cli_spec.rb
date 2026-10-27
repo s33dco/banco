@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+require 'banco/formatter/base'
+require 'banco/formatter/text'
+require 'banco/formatter/json_formatter'
+require 'banco/formatter/csv_formatter'
 require 'banco/cli'
 
 module Banco

@@ -19,19 +19,16 @@ Style/Documentation:
 Gemspec/DevelopmentDependencies:
   Enabled: false
 
-# Legacy code — will be resolved in Session B (CLI rewrite) and Session C (Transaction refactor)
 Metrics/MethodLength:
   Max: 15
   Exclude:
-    - 'lib/banco/reader.rb'
-    - 'lib/banco/viewable.rb'
     - 'lib/banco/cli.rb'
+    - 'lib/banco/formatter/text.rb'
 
 Metrics/AbcSize:
   Exclude:
-    - 'lib/banco/reader.rb'
-    - 'lib/banco/viewable.rb'
     - 'lib/banco/cli.rb'
+    - 'lib/banco/formatter/text.rb'
 
 Metrics/BlockLength:
   Exclude:
@@ -44,14 +41,9 @@ Metrics/ParameterLists:
 Metrics/ClassLength:
   Max: 150
 
-Metrics/ModuleLength:
-  Exclude:
-    - 'lib/banco/viewable.rb'
-
-# Viewable module will be dissolved in Session D; bottom_line complexity is temporary
 Metrics/CyclomaticComplexity:
   Exclude:
-    - 'lib/banco/viewable.rb'
+    - 'lib/banco/formatter/text.rb'
 
 # Allow up to 2 expectations per example for related assertions
 RSpec/MultipleExpectations:
