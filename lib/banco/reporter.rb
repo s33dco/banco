@@ -23,7 +23,7 @@ module Banco
     def initialize(csv_file_name, report_name, transactions)
       @csv_file_name = csv_file_name
       @name = report_name
-      @all_transactions = transactions
+      @all_transactions = transactions.dup
       @outgoing_trans = []
       @incoming_trans = []
       @outgoings = Hash.new(0)

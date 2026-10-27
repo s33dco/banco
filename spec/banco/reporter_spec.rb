@@ -15,6 +15,15 @@ module Banco
       expect(Reporter::GROUPING_PREFIX_LENGTH).to eq(9)
     end
 
+    it 'does not mutate the transactions array passed to it' do
+      reader = Banco::Reader.new('test.csv', 'test')
+      reader.read_in_csv_data
+      transactions = reader.all_from_csv
+      original_size = transactions.size
+      Banco::Reporter.new('test.csv', 'test', transactions)
+      expect(transactions.size).to eq(original_size)
+    end
+
     it 'should remove transactions with zero values (moneyin / moneyout)' do
       expect(@tester.all_transactions.size).to eq(8)
     end
