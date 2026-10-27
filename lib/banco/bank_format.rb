@@ -45,7 +45,7 @@ module Banco
     description_column 1
     type_column        2
     credit_column      3
-    debit_column       3
+    debit_column       4
     date_format        '%d/%m/%Y'
   end
 

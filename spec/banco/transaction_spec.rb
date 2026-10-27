@@ -80,5 +80,37 @@ module Banco
         expect(t.credit_pence).to eq(10_000)
       end
     end
+
+    context 'with a single signed amount column (credit_col == debit_col)' do
+      subject(:fmt) { BankFormat[:signed_amount] }
+
+      it 'treats a positive amount as credit' do
+        t = described_class.from_row(['2017-09-01', 'Salary', '1500.00'], fmt)
+        expect(t.credit_pence).to eq(150_000)
+        expect(t.debit_pence).to eq(0)
+      end
+
+      it 'treats a negative amount as debit' do
+        t = described_class.from_row(['2017-09-05', 'Rent', '-900.00'], fmt)
+        expect(t.credit_pence).to eq(0)
+        expect(t.debit_pence).to eq(90_000)
+      end
+    end
+
+    context 'with split credit and debit columns (split_columns)' do
+      subject(:fmt) { BankFormat[:split_columns] }
+
+      it 'reads the money-out value from the debit column' do
+        t = described_class.from_row(['05/09/2017', 'Rent', 'debit', nil, '900.00'], fmt)
+        expect(t.credit_pence).to eq(0)
+        expect(t.debit_pence).to eq(90_000)
+      end
+
+      it 'reads the money-in value from the credit column' do
+        t = described_class.from_row(['01/09/2017', 'Salary', 'credit', '1500.00', nil], fmt)
+        expect(t.credit_pence).to eq(150_000)
+        expect(t.debit_pence).to eq(0)
+      end
+    end
   end
 end

@@ -67,9 +67,17 @@ banco --file export.csv --header --prefix-length 6
 
 | Name | Date format | Columns | Notes |
 |------|-------------|---------|-------|
-| `legacy` | `%d/%m/%y` | date, description, type, credit, debit | Default — Barclays-style |
-| `split_columns` | `%d/%m/%Y` | date, description, type, amount | Single amount column |
-| `signed_amount` | `%Y-%m-%d` | date, description, amount | No type column |
+| `legacy` | `%d/%m/%y` | date, description, type, credit, debit | Default — Barclays-style, separate money-in / money-out columns |
+| `split_columns` | `%d/%m/%Y` | date, description, type, credit, debit | Like `legacy` with a 4-digit year |
+| `signed_amount` | `%Y-%m-%d` | date, description, amount | Single signed amount column, no type column |
+
+### Signed amount columns
+
+When a format maps `credit_column` and `debit_column` to the **same** column
+(as `signed_amount` does), that column is read as a single **signed** amount:
+positive values are treated as money in (credit) and negative values as money
+out (debit). Formats with separate credit and debit columns (like `legacy` and
+`split_columns`) read each column directly.
 
 ### Custom formats
 

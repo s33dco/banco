@@ -42,6 +42,11 @@ Metrics/ParameterLists:
 Metrics/ClassLength:
   Max: 150
 
+# Specs wrap their examples in `module Banco`, which inflates the line count
+Metrics/ModuleLength:
+  Exclude:
+    - 'spec/**/*'
+
 Metrics/CyclomaticComplexity:
   Exclude:
     - 'lib/banco/formatter/text.rb'

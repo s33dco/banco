@@ -61,6 +61,19 @@ module Banco
       end
     end
 
+    describe ':split_columns built-in' do
+      subject(:fmt) { described_class[:split_columns] }
+
+      it 'maps credit and debit to separate columns' do
+        expect(fmt.credit_col).to eq(3)
+        expect(fmt.debit_col).to eq(4)
+      end
+
+      it 'uses a 4-digit year date format' do
+        expect(fmt.date_fmt).to eq('%d/%m/%Y')
+      end
+    end
+
     describe ':signed_amount built-in' do
       subject(:fmt) { described_class[:signed_amount] }
 

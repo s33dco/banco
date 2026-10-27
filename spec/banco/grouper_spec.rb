@@ -99,5 +99,37 @@ module Banco
         expect(report.incoming_total).to eq(150_000)
       end
     end
+
+    context 'with a signed_amount format (single signed column)' do
+      subject(:report) { described_class.new(signed_txns).call }
+
+      let(:signed_txns) do
+        [['2017-09-01', 'Salary', '1500.00'], ['2017-09-05', 'Rent', '-900.00'],
+         ['2017-09-10', 'Groceries', '-45.67']].map { |r| Transaction.from_row(r, BankFormat[:signed_amount]) }
+      end
+
+      it 'classifies negatives as outgoing and positives as incoming' do
+        expect(report.outgoing_trans.size).to eq(2)
+        expect(report.incoming_trans.size).to eq(1)
+      end
+
+      it 'totals outgoing and incoming separately' do
+        expect(report.outgoing_total).to eq(94_567)
+        expect(report.incoming_total).to eq(150_000)
+      end
+    end
+
+    context 'with a split_columns format (separate money-out column)' do
+      let(:split_txns) do
+        [['01/09/2017', 'Salary', 'credit', '1500.00', nil], ['05/09/2017', 'Rent', 'debit', nil, '900.00']]
+          .map { |r| Transaction.from_row(r, BankFormat[:split_columns]) }
+      end
+
+      it 'reads money-out from column 4 instead of dropping the row' do
+        report = described_class.new(split_txns).call
+        expect(report.outgoing_trans.size).to eq(1)
+        expect(report.outgoing_total).to eq(90_000)
+      end
+    end
   end
 end
