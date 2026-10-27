@@ -1,25 +1,30 @@
 # frozen_string_literal: true
 
 module Banco
-  class Transaction
-    require 'bigdecimal'
-    attr_reader :date, :description, :type, :moneyin, :moneyout, :csv_row_count
+  Transaction = Data.define(:date, :description, :type, :credit_pence, :debit_pence) do
+    class << self
+      def from_row(row)
+        new(
+          date: row[0],
+          description: row[1].to_s.upcase.ljust(22)[0, 22],
+          type: row[2].to_s.upcase.ljust(8)[0, 8],
+          credit_pence: parse_pence(row[3]),
+          debit_pence: parse_pence(row[4])
+        )
+      end
 
-    def initialize(date_string, description, type, moneyin, moneyout, csv_row_count)
-      @csv_row_count = csv_row_count
-      @moneyin = convert(moneyin)
-      @moneyout = convert(moneyout)
-      @date = date_string
-      @description = format('%-22.22s', description.to_s.upcase)
-      @type = format('%-8.8s', type.to_s.upcase)
+      private
+
+      def parse_pence(str)
+        return 0 if str.nil? || str.strip.empty?
+
+        Float(str) # validates; exact conversion uses Rational below
+        (str.to_r * 100).to_i
+      rescue ArgumentError
+        raise ArgumentError, "Non-numeric money value: #{str.inspect}"
+      end
     end
 
-    def convert(money)
-      money.nil? ? BigDecimal('0') : BigDecimal(money)
-    end
-
-    def to_s
-      "#{date} #{type} #{description}"
-    end
+    def to_s = "#{date} #{type} #{description}"
   end
 end
