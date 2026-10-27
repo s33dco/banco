@@ -27,7 +27,7 @@ module Banco
         puts "\nloading #{filename}..."
       else
         puts "#{filename} isn't a valid file for Banco !".center(54)
-        throw
+        raise ArgumentError, "#{filename} is not a valid .csv file"
       end
     end
   end
