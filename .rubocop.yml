@@ -25,11 +25,13 @@ Metrics/MethodLength:
   Exclude:
     - 'lib/banco/reader.rb'
     - 'lib/banco/viewable.rb'
+    - 'lib/banco/cli.rb'
 
 Metrics/AbcSize:
   Exclude:
     - 'lib/banco/reader.rb'
     - 'lib/banco/viewable.rb'
+    - 'lib/banco/cli.rb'
 
 Metrics/BlockLength:
   Exclude:

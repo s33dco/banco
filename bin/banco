@@ -1,53 +1,42 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-require_relative '../lib/banco/viewable'
-require_relative '../lib/banco/get_file'
-require_relative '../lib/banco/reader'
-require_relative '../lib/banco/reporter'
+$LOAD_PATH.unshift(File.expand_path('../lib', __dir__))
+require 'banco'
 
 module Banco
-  def self.starter
-    Viewable.prompt
-    begin
-      file = GetFile.new
-      reader = Reader.new(file.csv_file_name, file.summary_name)
-      reader.read_in_csv_data
-      Reporter.new(reader.csv_file_name, reader.report_name, reader.all_from_csv)
-    rescue StandardError
-      puts "try again or 'q' to exit".center(54)
-      retry
-    end
-  end
+  options = CLI.parse
+  options[:file] ||= FilePicker.pick
 
   Viewable.hello
-  report = starter
+
+  reader = Reader.new(options[:file], File.basename(options[:file], '.csv'),
+                      skip_header: options[:skip_header])
+  reader.read_in_csv_data
+  report = Reporter.new(options[:file], File.basename(options[:file], '.csv'),
+                        reader.all_from_csv)
+
   loop do
     report.menu
     answer = gets.chomp.downcase
     case answer
-    when 'a'
-      print report.transactions_all
-    when 'o'
-      print report.transactions_out
-    when 'i'
-      print report.transactions_in
-    when 'm'
-      print report.money_out_summary
-    when 'n'
-      print report.money_in_summary
-    when 'b'
-      print report.bottom_line
+    when 'a' then print report.transactions_all
+    when 'o' then print report.transactions_out
+    when 'i' then print report.transactions_in
+    when 'm' then print report.money_out_summary
+    when 'n' then print report.money_in_summary
+    when 'b' then print report.bottom_line
     when 'l'
-      report = starter
-    when 's'
-      report.save_summary_to_file
-    when 't'
-      report.save_transactions_to_file
-    when 'q'
-      break
-    else
-      report.menu
+      options[:file] = FilePicker.pick
+      reader = Reader.new(options[:file], File.basename(options[:file], '.csv'),
+                          skip_header: options[:skip_header])
+      reader.read_in_csv_data
+      report = Reporter.new(options[:file], File.basename(options[:file], '.csv'),
+                            reader.all_from_csv)
+    when 's' then report.save_summary_to_file
+    when 't' then report.save_transactions_to_file
+    when 'q' then break
+    else report.menu
     end
   end
   Viewable.farewell
