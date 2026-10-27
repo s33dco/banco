@@ -13,6 +13,9 @@ Gem::Specification.new do |s|
   s.test_files    = Dir['spec/**/*']
   s.executables   = ['banco']
   s.required_ruby_version = '>=1.9'
-  s.add_development_dependency 'rspec', '~>2.8'
+  s.add_dependency 'bigdecimal'
+  s.add_dependency 'csv'
+  s.add_development_dependency 'rspec', '~> 3.13'
+  s.add_development_dependency 'rake'
   s.post_install_message = 'Thanks for installing, hope your numbers are positive!'
 end
