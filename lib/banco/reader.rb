@@ -9,16 +9,23 @@ module Banco
 
     attr_reader :all_from_csv, :report_name, :csv_file_name
 
-    def initialize(csv_file_name, report_name)
+    def initialize(csv_file_name, report_name, skip_header: false)
       @csv_file_name = csv_file_name
       @report_name = report_name
       @all_from_csv = []
+      @skip_header = skip_header
     end
 
     def read_in_csv_data
       @csv_row_count = 1
+      skipping_header = @skip_header
 
       CSV.foreach(csv_file_name) do |row|
+        if skipping_header
+          skipping_header = false
+          @csv_row_count += 1
+          next
+        end
         all_from_csv << Transaction.new(row[0], row[1], row[2], row[3], row[4], @csv_row_count)
         @csv_row_count += 1
       end
