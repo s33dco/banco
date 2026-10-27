@@ -6,7 +6,7 @@ module Banco
     def initialize
       @csv_file_name = gets.chomp.downcase
       if @csv_file_name == 'q'
-        Viewable::farewell
+        Viewable.farewell
         exit
       else
         file_checker_cleaner(@csv_file_name)
