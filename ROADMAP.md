@@ -60,6 +60,7 @@ Baseline audit against Ruby 3.4.8, October 2026. Items are grouped by category a
 | 22 | `GetFile` has no tests | The class is completely uncovered |
 | 23 | Date stored as a raw string — not validated or parsed | Dates like `31/02/17` would pass silently |
 | 24 | `Reporter#initialize` mutates `@all_transactions` via `delete_if` | Caller's array is modified in place; should operate on a dup |
+| 25 | `reporter_spec.rb` `before` block re-runs all four aggregation methods that `initialize` already ran — all totals and hashes are doubled | `reporter_spec.rb:13–17` | The expected values (183.34, 182.68, 321.58, 320.92) are each double the true totals; fix the `before` block to not repeat `initialize` work, then update the expectations |
 
 ---
 
@@ -70,3 +71,7 @@ Baseline audit against Ruby 3.4.8, October 2026. Items are grouped by category a
 | 25 | Built gem artifacts committed to the repo | Remove `banco-1.0.1.gem`, `banco-1.0.2.gem`, `banco-1.0.3.gem`; add `*.gem` to `.gitignore` |
 | 26 | `README` has no extension | Rename to `README.md` and write proper Markdown documentation |
 | 27 | `Gemfile.lock` committed for a gem (not an app) | Convention for gems is to gitignore `Gemfile.lock` so consumers resolve freely; add to `.gitignore` |
+
+---
+
+*Items 1–4, 6–8, 11–13 resolved. See git log for details.*
