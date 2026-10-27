@@ -29,6 +29,7 @@ Metrics/AbcSize:
   Exclude:
     - 'lib/banco/cli.rb'
     - 'lib/banco/formatter/text.rb'
+    - 'lib/banco/transaction.rb'
 
 Metrics/BlockLength:
   Exclude:

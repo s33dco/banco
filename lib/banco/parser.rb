@@ -5,9 +5,10 @@ require 'banco/transaction'
 
 module Banco
   class Parser
-    def initialize(file_path, skip_header: false)
+    def initialize(file_path, skip_header: false, bank_format: BankFormat[:legacy])
       @file_path = file_path
       @skip_header = skip_header
+      @bank_format = bank_format
     end
 
     def parse
@@ -15,7 +16,7 @@ module Banco
       CSV.foreach(@file_path).with_index do |row, i|
         next if @skip_header && i.zero?
 
-        rows << Transaction.from_row(row)
+        rows << Transaction.from_row(row, @bank_format)
       end
       rows
     rescue Errno::ENOENT

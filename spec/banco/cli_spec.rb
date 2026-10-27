@@ -51,6 +51,18 @@ module Banco
         expect { described_class.parse(['-F', 'xml']) }.to raise_error(OptionParser::InvalidArgument)
       end
 
+      it 'defaults bank to :legacy' do
+        expect(described_class.parse([])[:bank]).to eq(:legacy)
+      end
+
+      it 'sets :bank from --bank' do
+        expect(described_class.parse(['--bank', 'split_columns'])[:bank]).to eq(:split_columns)
+      end
+
+      it 'raises OptionParser::InvalidArgument for an unknown bank format' do
+        expect { described_class.parse(['--bank', 'unknown']) }.to raise_error(OptionParser::InvalidArgument)
+      end
+
       it 'exits on -v / --version' do
         expect { described_class.parse(['-v']) }.to raise_error(SystemExit)
       end

@@ -1,15 +1,17 @@
 # frozen_string_literal: true
 
+require 'banco/bank_format'
+
 module Banco
   Transaction = Data.define(:date, :description, :type, :credit_pence, :debit_pence) do
     class << self
-      def from_row(row)
+      def from_row(row, fmt = BankFormat[:legacy])
         new(
-          date: row[0],
-          description: row[1].to_s.upcase.ljust(22)[0, 22],
-          type: row[2].to_s.upcase.ljust(8)[0, 8],
-          credit_pence: parse_pence(row[3]),
-          debit_pence: parse_pence(row[4])
+          date: row[fmt.date_col],
+          description: row[fmt.description_col].to_s.upcase.ljust(22)[0, 22],
+          type: (fmt.type_col && row[fmt.type_col]).to_s.upcase.ljust(8)[0, 8],
+          credit_pence: parse_pence(row[fmt.credit_col]),
+          debit_pence: parse_pence(row[fmt.debit_col])
         )
       end
 

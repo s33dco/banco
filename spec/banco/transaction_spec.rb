@@ -60,5 +60,20 @@ module Banco
     it 'is frozen (Data.define immutability)' do
       expect(t).to be_frozen
     end
+
+    context 'with a custom column mapping' do
+      let(:fmt) do
+        instance_double(Banco::BankFormat,
+                        date_col: 1, description_col: 0, type_col: nil,
+                        credit_col: 2, debit_col: 3)
+      end
+
+      it 'reads columns according to the format' do
+        row = ['SALARY', '15/06/24', '100.00', nil]
+        t = described_class.from_row(row, fmt)
+        expect(t.date).to eq('15/06/24')
+        expect(t.credit_pence).to eq(10_000)
+      end
+    end
   end
 end

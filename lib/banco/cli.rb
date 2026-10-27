@@ -2,6 +2,7 @@
 
 require 'optparse'
 require 'banco/version'
+require 'banco/bank_format'
 require 'banco/formatter/base'
 require 'banco/formatter/text'
 require 'banco/formatter/json_formatter'
@@ -10,7 +11,7 @@ require 'banco/formatter/csv_formatter'
 module Banco
   class CLI
     def self.parse(argv = ARGV)
-      options = { format: 'text', prefix_length: 9, skip_header: false }
+      options = { format: 'text', prefix_length: 9, skip_header: false, bank: :legacy }
       parser = build_parser(options)
       parser.parse!(argv)
       options
@@ -43,7 +44,8 @@ module Banco
       private
 
       def build_parser(options)
-        fmt_names = Formatter::Base.names
+        fmt_names  = Formatter::Base.names
+        bank_names = BankFormat.names.map(&:to_s)
         OptionParser.new do |opts|
           opts.banner = 'Usage: banco [options]'
           opts.on('-f', '--file FILE', 'CSV file to analyse') { |v| options[:file] = v }
@@ -55,6 +57,9 @@ module Banco
           opts.on('--to DATE', 'Filter to date (dd/mm/yy)') { |v| options[:to] = v }
           opts.on('-F', '--format FORMAT', fmt_names, "Output format (#{fmt_names.join('/')})") do |v|
             options[:format] = v
+          end
+          opts.on('-b', '--bank NAME', bank_names, "Bank CSV format (#{bank_names.join('/')})") do |v|
+            options[:bank] = v.to_sym
           end
           opts.on('-v', '--version', 'Print version and exit') do
             puts Banco::VERSION

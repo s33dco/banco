@@ -41,6 +41,12 @@ module Banco
       it 'raises ArgumentError when the file does not exist' do
         expect { described_class.new('no_such_file.csv').parse }.to raise_error(ArgumentError, /File not found/)
       end
+
+      it 'accepts a bank_format: keyword and uses its column mapping' do
+        fmt = BankFormat[:legacy]
+        result = described_class.new(fixture, bank_format: fmt).parse
+        expect(result).to all(be_a(Transaction))
+      end
     end
   end
 end

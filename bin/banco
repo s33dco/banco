@@ -9,7 +9,9 @@ module Banco
   options[:file] ||= FilePicker.pick
 
   fmt_class = Formatter::Base.for_name(options[:format])
-  transactions = Parser.new(options[:file], skip_header: options[:skip_header]).parse
+  bank_fmt = BankFormat[options[:bank]]
+  transactions = Parser.new(options[:file], skip_header: options[:skip_header],
+                                            bank_format: bank_fmt).parse
   report = Grouper.new(transactions, prefix_length: options[:prefix_length]).call
   fmt = fmt_class.new(report)
 
