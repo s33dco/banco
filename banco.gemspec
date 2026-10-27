@@ -10,9 +10,8 @@ Gem::Specification.new do |s|
   s.email        = 'code@s33d.co'
   s.files = Dir['{bin,lib,spec}/**/*'] + %w[LICENSE README]
   s.homepage = 'https://github.com/s33dco/banco'
-  s.test_files    = Dir['spec/**/*']
   s.executables   = ['banco']
-  s.required_ruby_version = '>=1.9'
+  s.required_ruby_version = '>= 3.2'
   s.add_dependency 'bigdecimal'
   s.add_dependency 'csv'
   s.add_development_dependency 'rspec', '~> 3.13'
