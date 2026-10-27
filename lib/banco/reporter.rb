@@ -54,21 +54,3 @@ module Banco
   end
 end
 
-if $PROGRAM_NAME == __FILE__
-  reader = Banco::Reader.new('test.csv', 'test')
-  reader.read_in_csv_data
-  puts "\n\n\n#all csv data from reader object\n\n"
-  puts "#{reader.all_from_csv}\n\n"
-  report = Banco::Reporter.new(reader.csv_file_name, reader.report_name, reader.all_from_csv)
-  puts "#{report.name} is the Reporter object's name\nReporter object contents below, (3 arrays, 2 hashes):\n\n"
-  puts "\n\nall transactions array\n"
-  p report.all_transactions
-  puts "\n\noutgoings array\n"
-  p report.outgoing_trans
-  puts "\n\nincomings array\n"
-  p report.incoming_trans
-  puts "\n\nOutgoings hash\n"
-  p report.outgoings
-  puts "\n\nIncomings hash\n"
-  p report.incomings
-end

@@ -33,11 +33,3 @@ module Banco
   end
 end
 
-if $PROGRAM_NAME == __FILE__
-  file = Banco::GetFile.new
-  file.make_name
-  puts "\n\n\n"
-  p file.valid_file
-  p file.name
-  p file.summary_name
-end

@@ -23,10 +23,3 @@ module Banco
   end
 end
 
-if $PROGRAM_NAME == __FILE__
-  trans = Banco::Transaction.new('01/01/17', 'Supermarket', 'Purchase', '72.90', '0', '1')
-  p trans
-  t = Banco::Transaction.new
-  t.send(:initialize, '02/02/18', 'new way', 'credit', '0', '111.11', '2')
-  p t
-end

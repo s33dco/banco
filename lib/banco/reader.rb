@@ -54,11 +54,3 @@ module Banco
   end
 end
 
-if $PROGRAM_NAME == __FILE__
-  reader = Banco::Reader.new('test.csv', 'test')
-  reader.read_in_csv_data
-  puts reader.report_name
-  puts reader.csv_file_name
-  puts reader.all_from_csv
-  p reader
-end
