@@ -6,15 +6,9 @@ require 'banco/reader'
 module Banco
   describe Reporter do
     before do
-      csv_file_name = 'test.csv'
-      report_name = 'test'
-      @testreader = Banco::Reader.new(csv_file_name, report_name)
+      @testreader = Banco::Reader.new('test.csv', 'test')
       @testreader.read_in_csv_data
       @tester = Banco::Reporter.new('test.csv', 'test', @testreader.all_from_csv)
-      @tester.remove_blank_lines
-      @tester.split_in_out
-      @tester.total_outgoing
-      @tester.total_incoming
     end
 
     it 'should remove transactions with zero values (moneyin / moneyout)' do
@@ -38,19 +32,19 @@ module Banco
     end
 
     it 'should sum incoming transactions by matching description string' do
-      expect(@tester.incomings['INCOMING2']).to eq(BigDecimal('183.34'))
+      expect(@tester.incomings['INCOMING2']).to eq(BigDecimal('91.67'))
     end
 
     it 'should sum outgoing transactions by matching description string' do
-      expect(@tester.outgoings['OUTGOING2']).to eq(BigDecimal('182.68'))
+      expect(@tester.outgoings['OUTGOING2']).to eq(BigDecimal('91.34'))
     end
 
     it 'should sum total incoming transactions' do
-      expect(@tester.incoming_total).to eq(BigDecimal('321.58'))
+      expect(@tester.incoming_total).to eq(BigDecimal('160.79'))
     end
 
     it 'should sum total outgoing transactions' do
-      expect(@tester.outgoing_total).to eq(BigDecimal('320.92'))
+      expect(@tester.outgoing_total).to eq(BigDecimal('160.46'))
     end
   end
 end
