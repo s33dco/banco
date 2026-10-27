@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'date'
 require 'banco/transaction'
 
 module Banco
@@ -30,6 +31,10 @@ module Banco
 
     it 'stores date string unchanged' do
       expect(t.date).to eq('12/01/17')
+    end
+
+    it 'parses the date string into a Date object' do
+      expect(t.parsed_date).to eq(Date.new(2017, 1, 12))
     end
 
     it 'converts money strings to integer pence' do
@@ -65,7 +70,7 @@ module Banco
       let(:fmt) do
         instance_double(Banco::BankFormat,
                         date_col: 1, description_col: 0, type_col: nil,
-                        credit_col: 2, debit_col: 3)
+                        credit_col: 2, debit_col: 3, date_fmt: nil)
       end
 
       it 'reads columns according to the format' do

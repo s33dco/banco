@@ -64,5 +64,40 @@ module Banco
         expect(report.outgoings.keys.all? { |k| k.length <= 5 }).to be true
       end
     end
+
+    context 'with date filtering (multi_date.csv)' do
+      require 'date'
+      let(:multi_fixture) { File.expand_path('../fixtures/multi_date.csv', __dir__) }
+
+      let(:multi_txns) do
+        require 'csv'
+        CSV.read(multi_fixture).map { |row| Transaction.from_row(row) }
+      end
+
+      it 'returns all 10 rows without a filter' do
+        report = described_class.new(multi_txns).call
+        expect(report.all_transactions.size).to eq(10)
+      end
+
+      it 'filters to September rows only with to: Sep 30' do
+        report = described_class.new(multi_txns, to: Date.new(2017, 9, 30)).call
+        expect(report.all_transactions.size).to eq(5)
+      end
+
+      it 'filters to October rows only with from: Oct 1' do
+        report = described_class.new(multi_txns, from: Date.new(2017, 10, 1)).call
+        expect(report.all_transactions.size).to eq(5)
+      end
+
+      it 'totals September outgoings correctly' do
+        report = described_class.new(multi_txns, to: Date.new(2017, 9, 30)).call
+        expect(report.outgoing_total).to eq(100_887)
+      end
+
+      it 'totals September incoming correctly' do
+        report = described_class.new(multi_txns, to: Date.new(2017, 9, 30)).call
+        expect(report.incoming_total).to eq(150_000)
+      end
+    end
   end
 end

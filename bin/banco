@@ -9,10 +9,13 @@ module Banco
   options[:file] ||= FilePicker.pick
 
   fmt_class = Formatter::Base.for_name(options[:format])
-  bank_fmt = BankFormat[options[:bank]]
+  bank_fmt  = BankFormat[options[:bank]]
+  from_date = options[:from] ? Date.strptime(options[:from], bank_fmt.date_fmt) : nil
+  to_date   = options[:to]   ? Date.strptime(options[:to],   bank_fmt.date_fmt) : nil
   transactions = Parser.new(options[:file], skip_header: options[:skip_header],
                                             bank_format: bank_fmt).parse
-  report = Grouper.new(transactions, prefix_length: options[:prefix_length]).call
+  report = Grouper.new(transactions, prefix_length: options[:prefix_length],
+                                     from: from_date, to: to_date).call
   fmt = fmt_class.new(report)
 
   unless options[:format] == 'text'
