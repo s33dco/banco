@@ -6,7 +6,7 @@ require 'banco/reporter'
 
 module Banco
   describe 'integration: Reader → Reporter' do
-    let(:fixture) { File.expand_path('../../fixtures/test.csv', __FILE__) }
+    let(:fixture) { File.expand_path('../fixtures/test.csv', __dir__) }
 
     before do
       reader = Reader.new(fixture, 'integration test')

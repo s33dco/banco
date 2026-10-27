@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 
 module Banco
   class GetFile
@@ -23,7 +24,7 @@ module Banco
     end
 
     def file_checker_cleaner(filename)
-      if filename =~ /([^\s]+(\.csv)$)/
+      if /([^\s]+(\.csv)$)/.match?(filename)
         puts "\nloading #{filename}..."
       else
         puts "#{filename} isn't a valid file for Banco !".center(54)
@@ -32,4 +33,3 @@ module Banco
     end
   end
 end
-

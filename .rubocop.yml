@@ -1,0 +1,59 @@
+AllCops:
+  NewCops: enable
+  TargetRubyVersion: 3.2
+  SuggestExtensions: false
+  Exclude:
+    - 'spec/fixtures/**/*'
+
+plugins:
+  - rubocop-rspec
+  - rubocop-performance
+
+Style/FrozenStringLiteralComment:
+  EnforcedStyle: always
+
+Style/Documentation:
+  Enabled: false
+
+# Gem convention: dev deps belong in gemspec so gem installs work without a Gemfile
+Gemspec/DevelopmentDependencies:
+  Enabled: false
+
+# Legacy code — will be resolved in Session B (CLI rewrite) and Session C (Transaction refactor)
+Metrics/MethodLength:
+  Max: 15
+  Exclude:
+    - 'lib/banco/reader.rb'
+    - 'lib/banco/viewable.rb'
+
+Metrics/AbcSize:
+  Exclude:
+    - 'lib/banco/reader.rb'
+    - 'lib/banco/viewable.rb'
+
+Metrics/BlockLength:
+  Exclude:
+    - 'bin/banco'
+
+Metrics/ParameterLists:
+  Exclude:
+    - 'lib/banco/transaction.rb'
+
+Metrics/ClassLength:
+  Max: 150
+
+Metrics/ModuleLength:
+  Exclude:
+    - 'lib/banco/viewable.rb'
+
+# Viewable module will be dissolved in Session D; bottom_line complexity is temporary
+Metrics/CyclomaticComplexity:
+  Exclude:
+    - 'lib/banco/viewable.rb'
+
+# Allow up to 2 expectations per example for related assertions
+RSpec/MultipleExpectations:
+  Max: 2
+
+RSpec/ExampleLength:
+  Max: 10

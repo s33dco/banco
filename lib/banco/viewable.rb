@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 
 module Banco
   module Viewable
@@ -41,13 +42,13 @@ module Banco
     end
 
     def transactions_all
-      output = ''
+      output = +''
       output << dashes
       output << "\n"
       output << "All transactions:\n"
       output << "#{facts(all_transactions)}\n\n"
       all_transactions.each do |trans|
-        output << if trans.moneyout == 0
+        output << if trans.moneyout.zero?
                     "#{trans} + #{to_pounds(trans.moneyin)}\n"
                   else
                     "#{trans} - #{to_pounds(trans.moneyout)}\n"
@@ -58,7 +59,7 @@ module Banco
     end
 
     def transactions_out
-      output = ''
+      output = +''
       output << dashes
       output << "\n"
       output << "Outgoing Transactions:\n"
@@ -69,7 +70,7 @@ module Banco
     end
 
     def transactions_in
-      output = ''
+      output = +''
       output << dashes
       output << "\n"
       output << "Incoming Transactions :\n"
@@ -80,12 +81,12 @@ module Banco
     end
 
     def print_summary(kind, hash, total)
-      output = ''
+      output = +''
       output << dashes
       output << "\n"
       output << "#{kind} Summary, totals from #{hash.size} different sources :\n"
       output << "#{date_range}\n"
-      hash.sort_by { |_k, v| v }.reverse.each { |k, v| output << "#{k} #{to_pounds(v)}\n".rjust(54) }
+      hash.sort_by { |_k, v| v }.reverse_each { |k, v| output << "#{k} #{to_pounds(v)}\n".rjust(54) }
       output << "\n"
       output << "Total #{kind}: #{to_pounds(total)}\n".rjust(54)
       output << dashes
@@ -93,7 +94,7 @@ module Banco
     end
 
     def bottom_line
-      output = ''
+      output = +''
       output << dashes
       output << "\n"
       output << facts(all_transactions).to_s.rjust(54)

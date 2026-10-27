@@ -10,11 +10,15 @@ Gem::Specification.new do |s|
   s.email        = 'code@s33d.co'
   s.files = Dir['{bin,lib,spec}/**/*'] + %w[LICENSE README.md]
   s.homepage = 'https://github.com/s33dco/banco'
-  s.executables   = ['banco']
+  s.executables = ['banco']
   s.required_ruby_version = '>= 3.2'
   s.add_dependency 'bigdecimal'
   s.add_dependency 'csv'
-  s.add_development_dependency 'rspec', '~> 3.13'
   s.add_development_dependency 'rake'
+  s.add_development_dependency 'rspec', '~> 3.13'
+  s.add_development_dependency 'rubocop'
+  s.add_development_dependency 'rubocop-performance'
+  s.add_development_dependency 'rubocop-rspec'
   s.post_install_message = 'Thanks for installing, hope your numbers are positive!'
+  s.metadata['rubygems_mfa_required'] = 'true'
 end

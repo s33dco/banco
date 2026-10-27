@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 
 require_relative 'transaction'
 require_relative 'reader'
@@ -41,18 +42,19 @@ module Banco
     end
 
     def split_in_out
-      @outgoing_trans, @incoming_trans = @all_transactions.partition { |trans| trans.moneyin.zero? && trans.moneyout.positive? }
+      @outgoing_trans, @incoming_trans = @all_transactions.partition do |trans|
+        trans.moneyin.zero? && trans.moneyout.positive?
+      end
     end
 
     def total_outgoing
       @outgoing_trans.each { |trans| @outgoings[trans.description[0, GROUPING_PREFIX_LENGTH]] += trans.moneyout }
-      @outgoing_total = @outgoings.values.map.reduce(:+)
+      @outgoing_total = @outgoings.values.map.sum
     end
 
     def total_incoming
       @incoming_trans.each { |trans| @incomings[trans.description[0, GROUPING_PREFIX_LENGTH]] += trans.moneyin }
-      @incoming_total = @incomings.values.map.reduce(:+)
+      @incoming_total = @incomings.values.map.sum
     end
   end
 end
-

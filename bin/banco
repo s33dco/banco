@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
 require_relative '../lib/banco/viewable'
 require_relative '../lib/banco/get_file'
@@ -7,19 +8,19 @@ require_relative '../lib/banco/reporter'
 
 module Banco
   def self.starter
-    Viewable::prompt
+    Viewable.prompt
     begin
       file = GetFile.new
       reader = Reader.new(file.csv_file_name, file.summary_name)
       reader.read_in_csv_data
       Reporter.new(reader.csv_file_name, reader.report_name, reader.all_from_csv)
-    rescue
+    rescue StandardError
       puts "try again or 'q' to exit".center(54)
       retry
     end
   end
 
-  Viewable::hello
+  Viewable.hello
   report = starter
   loop do
     report.menu
@@ -49,5 +50,5 @@ module Banco
       report.menu
     end
   end
-  Viewable::farewell
+  Viewable.farewell
 end

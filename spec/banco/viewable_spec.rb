@@ -6,8 +6,8 @@ require 'banco/reader'
 
 module Banco
   describe Viewable do
-    let(:test_csv)    { File.expand_path('../../fixtures/test.csv', __FILE__) }
-    let(:deficit_csv) { File.expand_path('../../fixtures/deficit.csv', __FILE__) }
+    let(:test_csv)    { File.expand_path('../fixtures/test.csv', __dir__) }
+    let(:deficit_csv) { File.expand_path('../fixtures/deficit.csv', __dir__) }
 
     before do
       reader = Reader.new(test_csv, 'test')

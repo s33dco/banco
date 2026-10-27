@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 
 module Banco
   class Transaction
@@ -22,4 +23,3 @@ module Banco
     end
   end
 end
-
