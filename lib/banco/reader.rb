@@ -18,17 +18,12 @@ module Banco
     end
 
     def read_in_csv_data
-      @csv_row_count = 1
-      skipping_header = @skip_header
-
+      @csv_row_count = 0
       CSV.foreach(csv_file_name) do |row|
-        if skipping_header
-          skipping_header = false
-          @csv_row_count += 1
-          next
-        end
-        all_from_csv << Transaction.new(row[0], row[1], row[2], row[3], row[4], @csv_row_count)
         @csv_row_count += 1
+        next if @skip_header && @csv_row_count == 1
+
+        @all_from_csv << Transaction.from_row(row)
       end
     rescue ArgumentError => e
       non_numeric_in_csv(e, @csv_row_count)
@@ -36,7 +31,7 @@ module Banco
       input = gets.chomp.downcase
       @all_from_csv = []
       input == 'y' ? retry : Viewable.farewell
-    rescue Errno::ENOENT => e
+    rescue Errno::ENOENT
       puts "Can't find file #{@csv_file_name} - have another go or (q) quit\n\n"
       loop do
         input = gets.chomp.downcase

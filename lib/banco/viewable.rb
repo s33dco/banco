@@ -16,9 +16,8 @@ module Banco
       puts "\nor 'q' to quit\n\n\n"
     end
 
-    def to_pounds(money)
-      format = format('%10.2f', money.truncate(2))
-      "£#{format}"
+    def format_pence(pence)
+      "£#{format('%10.2f', pence / 100.0)}"
     end
 
     def dashes
@@ -48,10 +47,10 @@ module Banco
       output << "All transactions:\n"
       output << "#{facts(all_transactions)}\n\n"
       all_transactions.each do |trans|
-        output << if trans.moneyout.zero?
-                    "#{trans} + #{to_pounds(trans.moneyin)}\n"
+        output << if trans.debit_pence.zero?
+                    "#{trans} + #{format_pence(trans.credit_pence)}\n"
                   else
-                    "#{trans} - #{to_pounds(trans.moneyout)}\n"
+                    "#{trans} - #{format_pence(trans.debit_pence)}\n"
                   end
       end
       output << dashes
@@ -64,7 +63,7 @@ module Banco
       output << "\n"
       output << "Outgoing Transactions:\n"
       output << "#{facts(outgoing_trans)}\n\n"
-      outgoing_trans.each { |trans| output << "#{trans} - #{to_pounds(trans.moneyout)}\n" }
+      outgoing_trans.each { |trans| output << "#{trans} - #{format_pence(trans.debit_pence)}\n" }
       output << dashes
       output << "\n\n"
     end
@@ -75,7 +74,7 @@ module Banco
       output << "\n"
       output << "Incoming Transactions :\n"
       output << "#{facts(incoming_trans)}\n\n"
-      incoming_trans.each { |trans| output << "#{trans} + #{to_pounds(trans.moneyin)}\n" }
+      incoming_trans.each { |trans| output << "#{trans} + #{format_pence(trans.credit_pence)}\n" }
       output << dashes
       output << "\n\n"
     end
@@ -86,9 +85,9 @@ module Banco
       output << "\n"
       output << "#{kind} Summary, totals from #{hash.size} different sources :\n"
       output << "#{date_range}\n"
-      hash.sort_by { |_k, v| v }.reverse_each { |k, v| output << "#{k} #{to_pounds(v)}\n".rjust(54) }
+      hash.sort_by { |_k, v| v }.reverse_each { |k, v| output << "#{k} #{format_pence(v)}\n".rjust(54) }
       output << "\n"
-      output << "Total #{kind}: #{to_pounds(total)}\n".rjust(54)
+      output << "Total #{kind}: #{format_pence(total)}\n".rjust(54)
       output << dashes
       output << "\n\n"
     end
@@ -99,15 +98,15 @@ module Banco
       output << "\n"
       output << facts(all_transactions).to_s.rjust(54)
       output << "\n\n"
-      output << "Money In  : #{to_pounds(incoming_total)}".rjust(54)
+      output << "Money In  : #{format_pence(incoming_total)}".rjust(54)
       output << "\n"
-      output << "Money Out : #{to_pounds(outgoing_total)}".rjust(54)
+      output << "Money Out : #{format_pence(outgoing_total)}".rjust(54)
       output << "\n\n"
       diff = incoming_total - outgoing_total
       output << if outgoing_total > incoming_total
-                  "Outgoings exceed Incomings, DEFICIT of #{to_pounds(diff)}".rjust(54)
+                  "Outgoings exceed Incomings, DEFICIT of #{format_pence(diff.abs)}".rjust(54)
                 else
-                  "Incomings exceed Outgoings, SURPLUS of #{to_pounds(diff)}".rjust(54)
+                  "Incomings exceed Outgoings, SURPLUS of #{format_pence(diff)}".rjust(54)
                 end
       output << "\n"
       output << dashes
