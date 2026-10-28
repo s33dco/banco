@@ -2,8 +2,14 @@ AllCops:
   NewCops: enable
   TargetRubyVersion: 3.2
   SuggestExtensions: false
+  # Merge (not replace) RuboCop's default Exclude list, which covers
+  # vendor/**/* — important on CI where bundler installs into vendor/bundle.
+  inherit_mode:
+    merge:
+      - Exclude
   Exclude:
     - 'spec/fixtures/**/*'
+    - 'vendor/**/*'
 
 plugins:
   - rubocop-rspec
