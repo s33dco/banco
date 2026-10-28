@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.files = Dir['{bin,lib}/**/*'] + %w[LICENSE README.md CHANGELOG.md]
   s.homepage = 'https://github.com/s33dco/banco'
   s.executables = ['banco']
-  s.required_ruby_version = '>= 3.2'
+  s.required_ruby_version = '>= 3.3'
   s.add_dependency 'csv'
   s.add_development_dependency 'rake'
   s.add_development_dependency 'rspec', '~> 3.13'

@@ -8,7 +8,7 @@ Summarise bank statement CSV files from the command line.
 gem install banco
 ```
 
-Requires Ruby >= 3.2.
+Requires Ruby >= 3.3.
 
 ## Usage
 
@@ -131,7 +131,7 @@ bundle install
 bundle exec rake   # runs specs + RuboCop
 ```
 
-CI runs the full suite against Ruby 3.2, 3.3, and 3.4 on every push.
+CI runs the full suite against Ruby 3.3 and 3.4 on every push.
 
 ## Licence
 
