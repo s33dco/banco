@@ -1,49 +1,116 @@
 # frozen_string_literal: true
 
+require 'date'
 require 'banco/transaction'
 
 module Banco
   describe Transaction do
-    before do
-      @trans1 = Transaction.new('12/01/17', 'some transaction', 'credit', '57.91', '0.00', '1')
-      @trans2 = Transaction.new('13/01/17', 'some other transaction', 'debit', '0.00', '57.91', '2')
+    subject(:t) { described_class.from_row(['12/01/17', 'some transaction', 'credit', '57.91', nil]) }
+
+    let(:debit_t) { described_class.from_row(['13/01/17', 'some other transaction', 'debit', nil, '57.91']) }
+
+    it 'stores description upcased and padded to 22 characters' do
+      expect(debit_t.description).to eq('SOME OTHER TRANSACTION')
+      expect(t.description).to eq('SOME TRANSACTION      ')
     end
 
-    # it "Should convert money in values to pence" do
-    #    expect(@trans1.moneyin).to eq(5791)
-    # end
-
-    # it "Should convert money out values to pence" do
-    #   expect(@trans2.moneyout).to eq(5791)
-    # end
-
-    it 'Should have a description string of 22 characters (upcase)' do
-      expect(@trans2.description).to eq('SOME OTHER TRANSACTION')
-      expect(@trans1.description).to eq('SOME TRANSACTION      ')
+    it 'truncates description longer than 22 characters' do
+      long = described_class.from_row(['12/01/17', 'A very long description that exceeds the limit', 'credit', '1.00',
+                                       nil])
+      expect(long.description.length).to eq(22)
+      expect(long.description).to eq('A VERY LONG DESCRIPTIO')
     end
 
-    it 'Should have a type string upcased and 8 characters long' do
-      expect(@trans2.type).to eq('DEBIT   ')
+    it 'stores type upcased and padded to 8 characters' do
+      expect(debit_t.type).to eq('DEBIT   ')
     end
 
-    it 'Should have a date string' do
-      expect(@trans1.date).to eq('12/01/17')
+    it 'handles nil type without raising' do
+      expect { described_class.from_row(['12/01/17', 'test', nil, '10.00', nil]) }.not_to raise_error
     end
 
-    it 'Should have a row number' do
-      expect(@trans2.csv_row_count).to eq('2')
+    it 'stores date string unchanged' do
+      expect(t.date).to eq('12/01/17')
     end
 
-    it 'should have a to_s of all date description type' do
-      expect(@trans1.to_s).to eq('12/01/17 CREDIT   SOME TRANSACTION      ')
+    it 'parses the date string into a Date object' do
+      expect(t.parsed_date).to eq(Date.new(2017, 1, 12))
     end
 
-    it 'convert empty strings in money columns to integers' do
-      expect(@trans1.moneyout).to eq(0)
+    it 'converts money strings to integer pence' do
+      expect(t.credit_pence).to eq(5791)
+      expect(debit_t.debit_pence).to eq(5791)
     end
 
-    it 'convert empty strings in money columns to integers' do
-      expect(@trans2.moneyin).to eq(0)
+    it 'converts nil money to zero pence' do
+      expect(t.debit_pence).to eq(0)
+      expect(debit_t.credit_pence).to eq(0)
+    end
+
+    it 'converts empty string money to zero pence' do
+      row_with_empty = described_class.from_row(['12/01/17', 'test', 'credit', '', ''])
+      expect(row_with_empty.credit_pence).to eq(0)
+      expect(row_with_empty.debit_pence).to eq(0)
+    end
+
+    it 'raises ArgumentError for a non-numeric money value' do
+      expect { described_class.from_row(['12/01/17', 'test', 'credit', 'bad', nil]) }
+        .to raise_error(ArgumentError, /Non-numeric/)
+    end
+
+    it 'has a to_s of date, type, description' do
+      expect(t.to_s).to eq('12/01/17 CREDIT   SOME TRANSACTION      ')
+    end
+
+    it 'is frozen (Data.define immutability)' do
+      expect(t).to be_frozen
+    end
+
+    context 'with a custom column mapping' do
+      let(:fmt) do
+        instance_double(Banco::BankFormat,
+                        date_col: 1, description_col: 0, type_col: nil,
+                        credit_col: 2, debit_col: 3, date_fmt: nil)
+      end
+
+      it 'reads columns according to the format' do
+        row = ['SALARY', '15/06/24', '100.00', nil]
+        t = described_class.from_row(row, fmt)
+        expect(t.date).to eq('15/06/24')
+        expect(t.credit_pence).to eq(10_000)
+      end
+    end
+
+    context 'with a single signed amount column (credit_col == debit_col)' do
+      subject(:fmt) { BankFormat[:signed_amount] }
+
+      it 'treats a positive amount as credit' do
+        t = described_class.from_row(['2017-09-01', 'Salary', '1500.00'], fmt)
+        expect(t.credit_pence).to eq(150_000)
+        expect(t.debit_pence).to eq(0)
+      end
+
+      it 'treats a negative amount as debit' do
+        t = described_class.from_row(['2017-09-05', 'Rent', '-900.00'], fmt)
+        expect(t.credit_pence).to eq(0)
+        expect(t.debit_pence).to eq(90_000)
+      end
+    end
+
+    context 'with split credit and debit columns (split_columns)' do
+      subject(:fmt) { BankFormat[:split_columns] }
+
+      it 'reads the money-out value from the debit column' do
+        t = described_class.from_row(['05/09/2017', 'Rent', 'debit', nil, '900.00'], fmt)
+        expect(t.credit_pence).to eq(0)
+        expect(t.debit_pence).to eq(90_000)
+      end
+
+      it 'reads the money-in value from the credit column' do
+        t = described_class.from_row(['01/09/2017', 'Salary', 'credit', '1500.00', nil], fmt)
+        expect(t.credit_pence).to eq(150_000)
+        expect(t.debit_pence).to eq(0)
+      end
     end
   end
 end

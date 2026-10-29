@@ -1,0 +1,65 @@
+AllCops:
+  NewCops: enable
+  TargetRubyVersion: 3.3
+  SuggestExtensions: false
+  # Merge (not replace) RuboCop's default Exclude list, which covers
+  # vendor/**/* — important on CI where bundler installs into vendor/bundle.
+  inherit_mode:
+    merge:
+      - Exclude
+  Exclude:
+    - 'spec/fixtures/**/*'
+    - 'vendor/**/*'
+
+plugins:
+  - rubocop-rspec
+  - rubocop-performance
+
+Style/FrozenStringLiteralComment:
+  EnforcedStyle: always
+
+Style/Documentation:
+  Enabled: false
+
+# Gem convention: dev deps belong in gemspec so gem installs work without a Gemfile
+Gemspec/DevelopmentDependencies:
+  Enabled: false
+
+Metrics/MethodLength:
+  Max: 15
+  Exclude:
+    - 'lib/banco/cli.rb'
+    - 'lib/banco/formatter/text.rb'
+
+Metrics/AbcSize:
+  Exclude:
+    - 'lib/banco/cli.rb'
+    - 'lib/banco/formatter/text.rb'
+    - 'lib/banco/transaction.rb'
+
+Metrics/BlockLength:
+  Exclude:
+    - 'bin/banco'
+
+Metrics/ParameterLists:
+  Exclude:
+    - 'lib/banco/transaction.rb'
+
+Metrics/ClassLength:
+  Max: 150
+
+# Specs wrap their examples in `module Banco`, which inflates the line count
+Metrics/ModuleLength:
+  Exclude:
+    - 'spec/**/*'
+
+Metrics/CyclomaticComplexity:
+  Exclude:
+    - 'lib/banco/formatter/text.rb'
+
+# Allow up to 2 expectations per example for related assertions
+RSpec/MultipleExpectations:
+  Max: 2
+
+RSpec/ExampleLength:
+  Max: 10

@@ -1,0 +1,10 @@
+21/09/17,Outgoing Transaction,Purchase,,12.34
+21/09/17,Incoming Transaction,credit,12.34,
+21/09/17,Transaction with all zeroes,debit,0,0
+21/09/17,Transaction with all nil values,debit,,
+21/09/17,Outgoing Transaction,Purchase,,56.78
+21/09/17,Incoming Transaction,credit,56.78,
+21/09/17,Outgoing2 Trans,Purchase,,67.89
+21/09/17,Incoming2 Trans,credit,67.89,
+21/09/17,Outgoing2 Trans,Purchase,,23.45
+21/09/17,Incoming2 Trans,credit,23.78,

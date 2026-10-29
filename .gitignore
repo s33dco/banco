@@ -1,0 +1,9 @@
+# Gem build artifacts
+*.gem
+Gemfile.lock
+
+# Generated report output files
+*.txt
+
+# OS
+.DS_Store
