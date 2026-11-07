@@ -97,9 +97,9 @@ module Banco
         expect(fmt.type_col).to be_nil
       end
 
-      it 'maps debit to column 2 and credit to column 3' do
+      it 'maps credit and debit to the same column (signed amount)' do
+        expect(fmt.credit_col).to eq(2)
         expect(fmt.debit_col).to eq(2)
-        expect(fmt.credit_col).to eq(3)
       end
 
       it 'uses a 4-digit year date format' do
