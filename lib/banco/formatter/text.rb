@@ -117,7 +117,11 @@ module Banco
       end
 
       def date_range
-        "(#{@report.all_transactions.last&.date} - #{@report.all_transactions.first&.date})"
+        first = @report.all_transactions.first
+        last_t = @report.all_transactions.last
+        days = (first.parsed_date - last_t.parsed_date).to_i.abs if first&.parsed_date && last_t&.parsed_date
+        day_str = days ? " — #{days} days" : ''
+        "(#{last_t&.date} - #{first&.date})#{day_str}"
       end
 
       def facts(transactions)

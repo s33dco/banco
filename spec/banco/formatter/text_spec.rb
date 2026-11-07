@@ -32,7 +32,7 @@ module Banco
 
       describe '#date_range' do
         it 'returns last-to-first date wrapped in parens' do
-          expect(fmt.date_range).to eq('(21/09/17 - 21/09/17)')
+          expect(fmt.date_range).to eq('(21/09/17 - 21/09/17) — 0 days')
         end
       end
 
