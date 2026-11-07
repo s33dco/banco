@@ -21,6 +21,7 @@ module Banco
         output << "'s' to save summaries to file\n"
         output << "'t' to save transactions to file\n"
         output << "\n'l' to load a new file\n"
+        output << "'+' to merge another file into the current set\n"
         output << "\nor 'q' to quit\n\n\n"
         output
       end

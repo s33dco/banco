@@ -85,5 +85,26 @@ module Banco
         expect(fmt.credit_col).to eq(fmt.debit_col)
       end
     end
+
+    describe ':first_direct built-in' do
+      subject(:fmt) { described_class[:first_direct] }
+
+      it 'is registered' do
+        expect(described_class.names).to include(:first_direct)
+      end
+
+      it 'has no type column' do
+        expect(fmt.type_col).to be_nil
+      end
+
+      it 'maps debit to column 2 and credit to column 3' do
+        expect(fmt.debit_col).to eq(2)
+        expect(fmt.credit_col).to eq(3)
+      end
+
+      it 'uses a 4-digit year date format' do
+        expect(fmt.date_fmt).to eq('%d/%m/%Y')
+      end
+    end
   end
 end

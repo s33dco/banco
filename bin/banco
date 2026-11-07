@@ -52,6 +52,15 @@ module Banco
       report = Grouper.new(transactions, prefix_length: options[:prefix_length],
                                          from: from_date, to: to_date).call
       fmt = fmt_class.new(report)
+    when '+'
+      extra_file = FilePicker.pick
+      extra = Parser.new(extra_file, skip_header: options[:skip_header],
+                                     bank_format: bank_fmt).parse
+      transactions += extra
+      report = Grouper.new(transactions, prefix_length: options[:prefix_length],
+                                         from: from_date, to: to_date).call
+      fmt = fmt_class.new(report)
+      puts "\n#{extra.size} transactions merged — #{transactions.size} total\n\n"
     when 'q' then break
     else print fmt.menu
     end

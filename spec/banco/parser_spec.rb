@@ -38,6 +38,14 @@ module Banco
         expect { described_class.new(bad_money).parse }.to raise_error(ArgumentError, /Non-numeric/)
       end
 
+      it 'auto-skips a header row on row 0 without raising' do
+        expect { described_class.new(with_header).parse }.not_to raise_error
+      end
+
+      it 'parses 10 data rows when auto-detecting a header' do
+        expect(described_class.new(with_header).parse.size).to eq(10)
+      end
+
       it 'raises ArgumentError when the file does not exist' do
         expect { described_class.new('no_such_file.csv').parse }.to raise_error(ArgumentError, /File not found/)
       end
