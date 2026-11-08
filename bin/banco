@@ -38,14 +38,16 @@ module Banco
       when 'b' then print fmt.bottom_line
       when 's'
         default = "#{File.basename(options[:file], '.csv')}_summary.csv"
-        print "\nSave summary as [#{default}]: "
+        print "\nSave summary as [#{default}]\n" \
+              '(press Enter to save here, or type a full path e.g. ~/Desktop/summary.csv): '
         input = $stdin.gets.chomp
         path = File.expand_path(input.empty? ? default : input)
         fmt.save_summary_to_file(path)
         puts "\nfile saved as #{path}\n\n"
       when 't'
         default = "#{File.basename(options[:file], '.csv')}_transactions.csv"
-        print "\nSave transactions as [#{default}]: "
+        print "\nSave transactions as [#{default}]\n" \
+              '(press Enter to save here, or type a full path e.g. ~/Desktop/transactions.csv): '
         input = $stdin.gets.chomp
         path = File.expand_path(input.empty? ? default : input)
         fmt.save_transactions_to_file(path)
