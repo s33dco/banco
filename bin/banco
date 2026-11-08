@@ -37,15 +37,19 @@ module Banco
       when 'n' then print fmt.money_in_summary
       when 'b' then print fmt.bottom_line
       when 's'
-        name = File.basename(options[:file], '.csv')
-        path = "#{name}_summary.csv"
+        default = "#{File.basename(options[:file], '.csv')}_summary.csv"
+        print "\nSave summary as [#{default}]: "
+        input = $stdin.gets.chomp
+        path = File.expand_path(input.empty? ? default : input)
         fmt.save_summary_to_file(path)
-        puts "\n\nfile saved as #{File.expand_path(path)}\n\n"
+        puts "\nfile saved as #{path}\n\n"
       when 't'
-        name = File.basename(options[:file], '.csv')
-        path = "#{name}_transactions.csv"
+        default = "#{File.basename(options[:file], '.csv')}_transactions.csv"
+        print "\nSave transactions as [#{default}]: "
+        input = $stdin.gets.chomp
+        path = File.expand_path(input.empty? ? default : input)
         fmt.save_transactions_to_file(path)
-        puts "\n\nfile saved as #{File.expand_path(path)}\n\n"
+        puts "\nfile saved as #{path}\n\n"
       when 'l'
         options[:file] = FilePicker.pick
         transactions = Parser.new(options[:file], skip_header: options[:skip_header],
