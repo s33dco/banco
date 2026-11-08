@@ -32,6 +32,7 @@ presents an interactive menu:
 | `s` | Save summary to file |
 | `t` | Save transactions to file |
 | `l` | Load a new file |
+| `+` | Merge another file into the current dataset |
 | `q` | Quit |
 
 Use `--format json` or `--format csv` for pipe-friendly output (no menu, exits after printing).
@@ -44,7 +45,7 @@ Use `--format json` or `--format csv` for pipe-friendly output (no menu, exits a
 | `-F`, `--format FORMAT` | `text` | Output format: `text` / `json` / `csv` |
 | `-b`, `--bank NAME` | `legacy` | Bank CSV format (see Bank formats below) |
 | `-p`, `--prefix-length N` | `9` | Description prefix length for grouping |
-| `-H`, `--header` | off | Skip first row as header |
+| `-H`, `--header` | off | Skip first row as header (auto-detected when the first row is non-numeric) |
 | `--from DATE` | — | Filter from date (format matches bank format) |
 | `--to DATE` | — | Filter to date (format matches bank format) |
 | `-v`, `--version` | — | Print version and exit |
@@ -70,6 +71,7 @@ banco --file export.csv --header --prefix-length 6
 | `legacy` | `%d/%m/%y` | date, description, type, credit, debit | Default — Barclays-style, separate money-in / money-out columns |
 | `split_columns` | `%d/%m/%Y` | date, description, type, credit, debit | Like `legacy` with a 4-digit year |
 | `signed_amount` | `%Y-%m-%d` | date, description, amount | Single signed amount column, no type column |
+| `first_direct` | `%d/%m/%Y` | date, description, amount, reference/balance | First Direct exports — signed amount, trailing column ignored. Tolerates unquoted commas in descriptions. |
 
 ### Signed amount columns
 
@@ -98,7 +100,7 @@ Then use it with `banco --bank my_bank`.
 
 ## CSV format (legacy)
 
-Banco's default (`--bank legacy`) expects **no header row** and columns in this order:
+Banco's default (`--bank legacy`) expects columns in this order:
 
 | # | Content |
 |---|---------|
@@ -108,7 +110,7 @@ Banco's default (`--bank legacy`) expects **no header row** and columns in this 
 | 4 | Money in |
 | 5 | Money out |
 
-Pass `--header` if your export includes a header row. Any columns beyond the fifth are ignored.
+Header rows are auto-detected and skipped. Pass `--header` explicitly to suppress the warning. Any columns beyond the fifth are ignored.
 
 ## Where metaprogramming was used — and where it was not
 
