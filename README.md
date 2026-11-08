@@ -29,8 +29,8 @@ presents an interactive menu:
 | `m` | Money-out summary (grouped) |
 | `n` | Money-in summary (grouped) |
 | `b` | Bottom line (net position) |
-| `s` | Save summary as CSV |
-| `t` | Save transactions as CSV |
+| `s` | Save summary as CSV (prompts for path, default is `<filename>_summary.csv`) |
+| `t` | Save transactions as CSV (prompts for path, default is `<filename>_transactions.csv`) |
 | `l` | Load a new file |
 | `+` | Merge another file into the current dataset |
 | `q` | Quit |
