@@ -29,10 +29,11 @@ module Banco
     def parse_row(row, index)
       Transaction.from_row(row, @bank_format)
     rescue ArgumentError => e
-      raise unless index.zero? && e.message.include?('Non-numeric')
-
-      warn 'Skipping header row (use --header to suppress this warning)'
-      nil
+      if index.zero? && e.message.include?('Non-numeric')
+        warn 'Skipping header row (use --header to suppress this warning)'
+        return nil
+      end
+      raise ArgumentError, "Row #{index + 1}: #{e.message}"
     end
   end
 end

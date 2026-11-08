@@ -5,66 +5,72 @@ $LOAD_PATH.unshift(File.expand_path('../lib', __dir__))
 require 'banco'
 
 module Banco
-  options = CLI.parse
-  options[:file] ||= FilePicker.pick
+  begin
+    options = CLI.parse
+    options[:file] ||= FilePicker.pick
 
-  fmt_class = Formatter::Base.for_name(options[:format])
-  bank_fmt  = BankFormat[options[:bank]]
-  from_date = CLI.filter_date(options[:from], bank_fmt.date_fmt)
-  to_date   = CLI.filter_date(options[:to],   bank_fmt.date_fmt)
-  transactions = Parser.new(options[:file], skip_header: options[:skip_header],
-                                            bank_format: bank_fmt).parse
-  report = Grouper.new(transactions, prefix_length: options[:prefix_length],
-                                     from: from_date, to: to_date).call
-  fmt = fmt_class.new(report)
+    fmt_class = Formatter::Base.for_name(options[:format])
+    bank_fmt  = BankFormat[options[:bank]]
+    from_date = CLI.filter_date(options[:from], bank_fmt.date_fmt)
+    to_date   = CLI.filter_date(options[:to],   bank_fmt.date_fmt)
+    transactions = Parser.new(options[:file], skip_header: options[:skip_header],
+                                              bank_format: bank_fmt).parse
+    report = Grouper.new(transactions, prefix_length: options[:prefix_length],
+                                       from: from_date, to: to_date).call
+    fmt = fmt_class.new(report)
 
-  unless options[:format] == 'text'
-    puts fmt.call
-    exit
-  end
-
-  CLI.hello
-
-  loop do
-    print fmt.menu
-    answer = $stdin.gets.chomp.downcase
-    case answer
-    when 'a' then print fmt.transactions_all
-    when 'o' then print fmt.transactions_out
-    when 'i' then print fmt.transactions_in
-    when 'm' then print fmt.money_out_summary
-    when 'n' then print fmt.money_in_summary
-    when 'b' then print fmt.bottom_line
-    when 's'
-      name = File.basename(options[:file], '.csv')
-      path = "#{name}_summary.txt"
-      fmt.save_summary_to_file(path, csv_name: options[:file])
-      puts "\n\nfile saved as #{path}\n\n"
-    when 't'
-      name = File.basename(options[:file], '.csv')
-      path = "#{name}_transactions.txt"
-      fmt.save_transactions_to_file(path, csv_name: options[:file])
-      puts "\n\nfile saved as #{path}\n\n"
-    when 'l'
-      options[:file] = FilePicker.pick
-      transactions = Parser.new(options[:file], skip_header: options[:skip_header],
-                                                bank_format: bank_fmt).parse
-      report = Grouper.new(transactions, prefix_length: options[:prefix_length],
-                                         from: from_date, to: to_date).call
-      fmt = fmt_class.new(report)
-    when '+'
-      extra_file = FilePicker.pick
-      extra = Parser.new(extra_file, skip_header: options[:skip_header],
-                                     bank_format: bank_fmt).parse
-      transactions += extra
-      report = Grouper.new(transactions, prefix_length: options[:prefix_length],
-                                         from: from_date, to: to_date).call
-      fmt = fmt_class.new(report)
-      puts "\n#{extra.size} transactions merged — #{transactions.size} total\n\n"
-    when 'q' then break
-    else print fmt.menu
+    unless options[:format] == 'text'
+      puts fmt.call
+      exit
     end
-  end
 
-  CLI.farewell
+    CLI.hello
+
+    loop do
+      print fmt.menu
+      answer = $stdin.gets.chomp.downcase
+      case answer
+      when 'a' then print fmt.transactions_all
+      when 'o' then print fmt.transactions_out
+      when 'i' then print fmt.transactions_in
+      when 'm' then print fmt.money_out_summary
+      when 'n' then print fmt.money_in_summary
+      when 'b' then print fmt.bottom_line
+      when 's'
+        name = File.basename(options[:file], '.csv')
+        path = "#{name}_summary.txt"
+        fmt.save_summary_to_file(path, csv_name: options[:file])
+        puts "\n\nfile saved as #{path}\n\n"
+      when 't'
+        name = File.basename(options[:file], '.csv')
+        path = "#{name}_transactions.txt"
+        fmt.save_transactions_to_file(path, csv_name: options[:file])
+        puts "\n\nfile saved as #{path}\n\n"
+      when 'l'
+        options[:file] = FilePicker.pick
+        transactions = Parser.new(options[:file], skip_header: options[:skip_header],
+                                                  bank_format: bank_fmt).parse
+        report = Grouper.new(transactions, prefix_length: options[:prefix_length],
+                                           from: from_date, to: to_date).call
+        fmt = fmt_class.new(report)
+      when '+'
+        extra_file = FilePicker.pick
+        extra = Parser.new(extra_file, skip_header: options[:skip_header],
+                                       bank_format: bank_fmt).parse
+        transactions += extra
+        report = Grouper.new(transactions, prefix_length: options[:prefix_length],
+                                           from: from_date, to: to_date).call
+        fmt = fmt_class.new(report)
+        puts "\n#{extra.size} transactions merged — #{transactions.size} total\n\n"
+      when 'q' then break
+      else print fmt.menu
+      end
+    end
+
+    CLI.farewell
+  rescue ArgumentError => e
+    warn "\nError: #{e.message}"
+    warn 'Check the file matches the --bank format, or try a different --bank option.'
+    exit 1
+  end
 end
