@@ -15,9 +15,9 @@ module Banco
       context 'when no CSV files exist' do
         before { allow(Dir).to receive(:glob).with('*.csv').and_return([]) }
 
-        it 'returns the path the user types' do
+        it 'returns the path the user types, expanded' do
           with_input("custom.csv\n")
-          expect(described_class.pick(stdin:, stdout:)).to eq('custom.csv')
+          expect(described_class.pick(stdin:, stdout:)).to eq(File.expand_path('custom.csv'))
         end
 
         it 'exits when the user types q' do
@@ -34,9 +34,9 @@ module Banco
           expect(described_class.pick(stdin:, stdout:)).to eq('statements.csv')
         end
 
-        it 'returns a custom path when the user types one' do
+        it 'returns a custom path when the user types one, expanded' do
           with_input("other.csv\n")
-          expect(described_class.pick(stdin:, stdout:)).to eq('other.csv')
+          expect(described_class.pick(stdin:, stdout:)).to eq(File.expand_path('other.csv'))
         end
       end
 
@@ -50,9 +50,9 @@ module Banco
           expect(described_class.pick(stdin:, stdout:)).to eq('march.csv')
         end
 
-        it 'returns a custom path when the user types a non-numeric path' do
+        it 'returns a custom path when the user types a non-numeric path, expanded' do
           with_input("custom.csv\n")
-          expect(described_class.pick(stdin:, stdout:)).to eq('custom.csv')
+          expect(described_class.pick(stdin:, stdout:)).to eq(File.expand_path('custom.csv'))
         end
 
         it 'exits when the user types q' do

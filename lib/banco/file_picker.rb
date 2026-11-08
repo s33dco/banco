@@ -18,13 +18,13 @@ module Banco
         stdout.print 'No CSV files found. Enter path (or q to quit): '
         input = read_input(stdin)
         exit if input.downcase == 'q'
-        input
+        File.expand_path(input)
       end
 
       def confirm_single(file, stdin:, stdout:)
         stdout.print "Found #{file} — press Enter to use it, or type another path: "
         input = read_input(stdin)
-        input.empty? ? file : input
+        input.empty? ? file : File.expand_path(input)
       end
 
       def numbered_list(files, stdin:, stdout:)
@@ -34,7 +34,7 @@ module Banco
         input = read_input(stdin)
         exit if input.downcase == 'q'
         index = input.to_i
-        index.between?(1, files.size) ? files[index - 1] : input
+        index.between?(1, files.size) ? files[index - 1] : File.expand_path(input)
       end
 
       def read_input(stdin)
