@@ -15,26 +15,26 @@ module Banco
       private
 
       def prompt_for_path(stdin:, stdout:)
-        stdout.print 'No CSV files found. Enter path (or q to quit): '
+        stdout.print 'No CSV files found. Enter a full path (e.g. ~/Downloads/statement.csv), or q to quit: '
         input = read_input(stdin)
         exit if input.downcase == 'q'
-        input
+        File.expand_path(input)
       end
 
       def confirm_single(file, stdin:, stdout:)
-        stdout.print "Found #{file} — press Enter to use it, or type another path: "
+        stdout.print "Found #{file} — press Enter to use it, or type a full path (e.g. ~/Downloads/statement.csv): "
         input = read_input(stdin)
-        input.empty? ? file : input
+        input.empty? ? file : File.expand_path(input)
       end
 
       def numbered_list(files, stdin:, stdout:)
         stdout.puts "\nCSV files found:"
         files.each_with_index { |f, i| stdout.puts "  #{i + 1}. #{f}" }
-        stdout.print "\nEnter a number, a path, or q to quit: "
+        stdout.print "\nEnter a number, a full path (e.g. ~/Downloads/statement.csv), or q to quit: "
         input = read_input(stdin)
         exit if input.downcase == 'q'
         index = input.to_i
-        index.between?(1, files.size) ? files[index - 1] : input
+        index.between?(1, files.size) ? files[index - 1] : File.expand_path(input)
       end
 
       def read_input(stdin)

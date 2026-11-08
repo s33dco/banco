@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'csv'
+require 'tempfile'
 require 'banco/formatter/text'
 require 'banco/parser'
 require 'banco/grouper'
@@ -31,8 +33,8 @@ module Banco
       end
 
       describe '#date_range' do
-        it 'returns last-to-first date wrapped in parens' do
-          expect(fmt.date_range).to eq('(21/09/17 - 21/09/17)')
+        it 'returns last-to-first date with day count' do
+          expect(fmt.date_range).to eq('(21/09/17 - 21/09/17) — 0 days')
         end
       end
 
@@ -104,6 +106,58 @@ module Banco
 
         it 'includes the load-new-file option' do
           expect(fmt.menu).to include("'l' to load a new file")
+        end
+
+        it 'includes the merge-another-file option' do
+          expect(fmt.menu).to include("'+' to merge another file")
+        end
+      end
+
+      describe '#save_summary_to_file' do
+        it 'writes a CSV with Direction, Category, Total columns' do
+          path = Tempfile.new(['summary', '.csv']).path
+          fmt.save_summary_to_file(path)
+          rows = CSV.read(path, headers: true)
+          expect(rows.headers).to eq(%w[Direction Category Total])
+        end
+
+        it 'includes outgoing and incoming rows' do
+          path = Tempfile.new(['summary', '.csv']).path
+          fmt.save_summary_to_file(path)
+          rows = CSV.read(path, headers: true)
+          directions = rows.map { |r| r['Direction'] }.uniq.sort
+          expect(directions).to eq(%w[Incoming Outgoing])
+        end
+
+        it 'writes totals as decimal strings' do
+          path = Tempfile.new(['summary', '.csv']).path
+          fmt.save_summary_to_file(path)
+          rows = CSV.read(path, headers: true)
+          expect(rows.first['Total']).to match(/\A\d+\.\d{2}\z/)
+        end
+      end
+
+      describe '#save_transactions_to_file' do
+        it 'writes a CSV with Date, Description, Amount columns' do
+          path = Tempfile.new(['transactions', '.csv']).path
+          fmt.save_transactions_to_file(path)
+          rows = CSV.read(path, headers: true)
+          expect(rows.headers).to eq(%w[Date Description Amount])
+        end
+
+        it 'writes one row per transaction' do
+          path = Tempfile.new(['transactions', '.csv']).path
+          fmt.save_transactions_to_file(path)
+          rows = CSV.read(path, headers: true)
+          expect(rows.size).to eq(report.all_transactions.size)
+        end
+
+        it 'writes negative amounts for outgoing transactions' do
+          path = Tempfile.new(['transactions', '.csv']).path
+          fmt.save_transactions_to_file(path)
+          rows = CSV.read(path, headers: true)
+          outgoing = rows.select { |r| r['Amount'].to_f.negative? }
+          expect(outgoing).not_to be_empty
         end
       end
     end

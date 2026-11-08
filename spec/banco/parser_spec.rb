@@ -34,8 +34,16 @@ module Banco
         expect(outgoing.debit_pence).to eq(1234)
       end
 
-      it 'raises ArgumentError for a non-numeric money value' do
-        expect { described_class.new(bad_money).parse }.to raise_error(ArgumentError, /Non-numeric/)
+      it 'raises ArgumentError with row number for a non-numeric money value' do
+        expect { described_class.new(bad_money).parse }.to raise_error(ArgumentError, /Row 3: Non-numeric/)
+      end
+
+      it 'auto-skips a header row on row 0 without raising' do
+        expect { described_class.new(with_header).parse }.not_to raise_error
+      end
+
+      it 'parses 10 data rows when auto-detecting a header' do
+        expect(described_class.new(with_header).parse.size).to eq(10)
       end
 
       it 'raises ArgumentError when the file does not exist' do

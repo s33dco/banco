@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'csv'
 require_relative 'base'
 
 module Banco
@@ -18,9 +19,10 @@ module Banco
         output << "'m' for money out summary\n"
         output << "'n' for money in summary\n"
         output << "'b' for the bottom line\n"
-        output << "'s' to save summaries to file\n"
-        output << "'t' to save transactions to file\n"
+        output << "'s' to save summary as csv\n"
+        output << "'t' to save transactions as csv\n"
         output << "\n'l' to load a new file\n"
+        output << "'+' to merge another file into the current set\n"
         output << "\nor 'q' to quit\n\n\n"
         output
       end
@@ -81,33 +83,25 @@ module Banco
         output << "\n" << dashes << "\n\n"
       end
 
-      def save_summary_to_file(path, csv_name: nil)
-        File.open(path, 'w') do |f|
-          f.puts Time.now.strftime("\n\nprinted : %d %b %y at %I:%M%P")
-          f.puts "summarized by Banco from #{csv_name}" if csv_name
-          f.puts "\n"
-          f.puts money_out_summary
-          f.puts "\n"
-          f.puts money_in_summary
-          f.puts "\n"
-          f.puts bottom_line
-          f.puts "\n"
-          f.puts '♥️ code@s33d.co'.rjust(54)
+      def save_summary_to_file(path)
+        CSV.open(path, 'w') do |csv|
+          csv << %w[Direction Category Total]
+          @report.outgoings.sort_by { |_, v| -v }.each do |k, v|
+            csv << ['Outgoing', k.strip, format('%.2f', v / 100.0)]
+          end
+          @report.incomings.sort_by { |_, v| -v }.each do |k, v|
+            csv << ['Incoming', k.strip, format('%.2f', v / 100.0)]
+          end
         end
       end
 
-      def save_transactions_to_file(path, csv_name: nil)
-        File.open(path, 'w') do |f|
-          f.puts Time.now.strftime("\n\nprinted : %d %b %y at %I:%M%P")
-          f.puts "summarized by Banco from #{csv_name}" if csv_name
-          f.puts "\n"
-          f.puts transactions_out
-          f.puts "\n"
-          f.puts transactions_in
-          f.puts "\n"
-          f.puts bottom_line
-          f.puts "\n"
-          f.puts '♥️ code@s33d.co'.rjust(54)
+      def save_transactions_to_file(path)
+        CSV.open(path, 'w') do |csv|
+          csv << %w[Date Description Amount]
+          @report.all_transactions.each do |t|
+            amount = t.credit_pence.positive? ? t.credit_pence / 100.0 : -(t.debit_pence / 100.0)
+            csv << [t.date, t.description.strip, format('%.2f', amount)]
+          end
         end
       end
 
@@ -116,7 +110,11 @@ module Banco
       end
 
       def date_range
-        "(#{@report.all_transactions.last&.date} - #{@report.all_transactions.first&.date})"
+        first = @report.all_transactions.first
+        last_t = @report.all_transactions.last
+        days = (first.parsed_date - last_t.parsed_date).to_i.abs if first&.parsed_date && last_t&.parsed_date
+        day_str = days ? " — #{days} days" : ''
+        "(#{last_t&.date} - #{first&.date})#{day_str}"
       end
 
       def facts(transactions)

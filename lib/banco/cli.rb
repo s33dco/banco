@@ -40,7 +40,6 @@ module Banco
       puts 'import a .csv file for review'.center(55)
       puts "\n\n"
       puts 'the .csv file should have :'.center(55)
-      puts 'NO headers'.center(55)
       puts 'with columns ordered (left to right)'.center(55)
       puts 'date - description - type - money in - money out'.center(55)
       puts 'all additional columns will be ignored'.center(55)

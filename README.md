@@ -29,9 +29,10 @@ presents an interactive menu:
 | `m` | Money-out summary (grouped) |
 | `n` | Money-in summary (grouped) |
 | `b` | Bottom line (net position) |
-| `s` | Save summary to file |
-| `t` | Save transactions to file |
+| `s` | Save summary as CSV (prompts for path, default is `<filename>_summary.csv`) |
+| `t` | Save transactions as CSV (prompts for path, default is `<filename>_transactions.csv`) |
 | `l` | Load a new file |
+| `+` | Merge another file into the current dataset |
 | `q` | Quit |
 
 Use `--format json` or `--format csv` for pipe-friendly output (no menu, exits after printing).
@@ -44,7 +45,7 @@ Use `--format json` or `--format csv` for pipe-friendly output (no menu, exits a
 | `-F`, `--format FORMAT` | `text` | Output format: `text` / `json` / `csv` |
 | `-b`, `--bank NAME` | `legacy` | Bank CSV format (see Bank formats below) |
 | `-p`, `--prefix-length N` | `9` | Description prefix length for grouping |
-| `-H`, `--header` | off | Skip first row as header |
+| `-H`, `--header` | off | Skip first row as header (auto-detected when the first row is non-numeric) |
 | `--from DATE` | — | Filter from date (format matches bank format) |
 | `--to DATE` | — | Filter to date (format matches bank format) |
 | `-v`, `--version` | — | Print version and exit |
@@ -70,14 +71,37 @@ banco --file export.csv --header --prefix-length 6
 | `legacy` | `%d/%m/%y` | date, description, type, credit, debit | Default — Barclays-style, separate money-in / money-out columns |
 | `split_columns` | `%d/%m/%Y` | date, description, type, credit, debit | Like `legacy` with a 4-digit year |
 | `signed_amount` | `%Y-%m-%d` | date, description, amount | Single signed amount column, no type column |
+| `date_description_amount` | `%d/%m/%Y` | date, description, amount, trailing | Signed amount at second-to-last position; trailing column (balance, reference, etc.) ignored. Tolerates unquoted commas in descriptions. |
+
+### Column ordering
+
+`date_description_amount` uses `Date | Description | Amount | trailing column`:
+
+```
+Date        Description                    Amount    Balance/Reference
+07/10/2026  SAINSBURYS S/MKTS LEWES ROAD   -22.05    72.73
+07/10/2026  MARLEY EI  Loan/rent           450.00    1093.70
+```
+
+The trailing column (Balance or Reference) is always ignored. The Amount column is read
+from the **second-to-last** position, so unquoted commas inside a description (which
+can appear in credit card exports) do not shift the Amount value.
+
+`legacy` and `split_columns` use `Date | Description | Type | Credit | Debit`:
+
+```
+Date        Description             Type      Credit    Debit
+21/09/17    Incoming Transaction    credit    12.34
+21/09/17    Outgoing Transaction    Purchase            12.34
+```
 
 ### Signed amount columns
 
 When a format maps `credit_column` and `debit_column` to the **same** column
-(as `signed_amount` does), that column is read as a single **signed** amount:
-positive values are treated as money in (credit) and negative values as money
-out (debit). Formats with separate credit and debit columns (like `legacy` and
-`split_columns`) read each column directly.
+(as `signed_amount` and `date_description_amount` do), that column is read as a
+single **signed** amount: positive values are money in (credit) and negative values
+are money out (debit). Formats with separate columns (`legacy`, `split_columns`)
+read each column directly.
 
 ### Custom formats
 
@@ -98,7 +122,7 @@ Then use it with `banco --bank my_bank`.
 
 ## CSV format (legacy)
 
-Banco's default (`--bank legacy`) expects **no header row** and columns in this order:
+Banco's default (`--bank legacy`) expects columns in this order:
 
 | # | Content |
 |---|---------|
@@ -108,7 +132,7 @@ Banco's default (`--bank legacy`) expects **no header row** and columns in this 
 | 4 | Money in |
 | 5 | Money out |
 
-Pass `--header` if your export includes a header row. Any columns beyond the fifth are ignored.
+Header rows are auto-detected and skipped. Pass `--header` explicitly to suppress the warning. Any columns beyond the fifth are ignored.
 
 ## Where metaprogramming was used — and where it was not
 
