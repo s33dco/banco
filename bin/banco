@@ -53,16 +53,30 @@ module Banco
         fmt.save_transactions_to_file(path)
         puts "\nfile saved as #{path}\n\n"
       when 'l'
-        options[:file] = FilePicker.pick
-        transactions = Parser.new(options[:file], skip_header: options[:skip_header],
+        new_file = FilePicker.pick
+        begin
+          new_transactions = Parser.new(new_file, skip_header: options[:skip_header],
                                                   bank_format: bank_fmt).parse
+        rescue ArgumentError => e
+          warn "\nError: #{e.message}"
+          warn 'The current file is still loaded — try again.'
+          next
+        end
+        options[:file] = new_file
+        transactions = new_transactions
         report = Grouper.new(transactions, prefix_length: options[:prefix_length],
                                            from: from_date, to: to_date).call
         fmt = fmt_class.new(report)
       when '+'
         extra_file = FilePicker.pick
-        extra = Parser.new(extra_file, skip_header: options[:skip_header],
-                                       bank_format: bank_fmt).parse
+        begin
+          extra = Parser.new(extra_file, skip_header: options[:skip_header],
+                                         bank_format: bank_fmt).parse
+        rescue ArgumentError => e
+          warn "\nError: #{e.message}"
+          warn 'Nothing was merged — the current set is unchanged.'
+          next
+        end
         transactions += extra
         report = Grouper.new(transactions, prefix_length: options[:prefix_length],
                                            from: from_date, to: to_date).call
