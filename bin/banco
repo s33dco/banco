@@ -38,13 +38,13 @@ module Banco
       when 'b' then print fmt.bottom_line
       when 's'
         name = File.basename(options[:file], '.csv')
-        path = "#{name}_summary.txt"
-        fmt.save_summary_to_file(path, csv_name: options[:file])
+        path = "#{name}_summary.csv"
+        fmt.save_summary_to_file(path)
         puts "\n\nfile saved as #{path}\n\n"
       when 't'
         name = File.basename(options[:file], '.csv')
-        path = "#{name}_transactions.txt"
-        fmt.save_transactions_to_file(path, csv_name: options[:file])
+        path = "#{name}_transactions.csv"
+        fmt.save_transactions_to_file(path)
         puts "\n\nfile saved as #{path}\n\n"
       when 'l'
         options[:file] = FilePicker.pick
