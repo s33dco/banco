@@ -71,12 +71,11 @@ banco --file export.csv --header --prefix-length 6
 | `legacy` | `%d/%m/%y` | date, description, type, credit, debit | Default — Barclays-style, separate money-in / money-out columns |
 | `split_columns` | `%d/%m/%Y` | date, description, type, credit, debit | Like `legacy` with a 4-digit year |
 | `signed_amount` | `%Y-%m-%d` | date, description, amount | Single signed amount column, no type column |
-| `bank_account` | `%d/%m/%Y` | date, description, amount, balance | First Direct current account exports — signed amount, balance column ignored. |
-| `credit_card` | `%d/%m/%Y` | date, description, amount, reference | First Direct credit card exports — signed amount, reference column ignored. Tolerates unquoted commas in descriptions. |
+| `date_description_amount` | `%d/%m/%Y` | date, description, amount, trailing | Signed amount at second-to-last position; trailing column (balance, reference, etc.) ignored. Tolerates unquoted commas in descriptions. |
 
 ### Column ordering
 
-`bank_account` and `credit_card` both use `Date | Description | Amount | trailing column`:
+`date_description_amount` uses `Date | Description | Amount | trailing column`:
 
 ```
 Date        Description                    Amount    Balance/Reference
@@ -99,9 +98,9 @@ Date        Description             Type      Credit    Debit
 ### Signed amount columns
 
 When a format maps `credit_column` and `debit_column` to the **same** column
-(as `signed_amount`, `bank_account`, and `credit_card` do), that column is read as
-a single **signed** amount: positive values are money in (credit) and negative
-values are money out (debit). Formats with separate columns (`legacy`, `split_columns`)
+(as `signed_amount` and `date_description_amount` do), that column is read as a
+single **signed** amount: positive values are money in (credit) and negative values
+are money out (debit). Formats with separate columns (`legacy`, `split_columns`)
 read each column directly.
 
 ### Custom formats
