@@ -42,6 +42,10 @@ module Banco
               '(press Enter to save here, or type a full path e.g. ~/Desktop/summary.csv): '
         input = $stdin.gets.chomp
         path = File.expand_path(input.empty? ? default : input)
+        unless File.directory?(File.dirname(path))
+          warn "\nError: directory does not exist — #{File.dirname(path)}"
+          next
+        end
         fmt.save_summary_to_file(path)
         puts "\nfile saved as #{path}\n\n"
       when 't'
@@ -50,6 +54,10 @@ module Banco
               '(press Enter to save here, or type a full path e.g. ~/Desktop/transactions.csv): '
         input = $stdin.gets.chomp
         path = File.expand_path(input.empty? ? default : input)
+        unless File.directory?(File.dirname(path))
+          warn "\nError: directory does not exist — #{File.dirname(path)}"
+          next
+        end
         fmt.save_transactions_to_file(path)
         puts "\nfile saved as #{path}\n\n"
       when 'l'
