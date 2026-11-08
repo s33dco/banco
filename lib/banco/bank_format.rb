@@ -58,10 +58,10 @@ module Banco
   end
 
   BankFormat.define(:first_direct) do
-    date_column        0
+    date_column 0
     description_column 1
-    credit_column      2
-    debit_column       2
-    date_format        '%d/%m/%Y'
+    credit_column(-2)
+    debit_column(-2)
+    date_format '%d/%m/%Y'
   end
 end
