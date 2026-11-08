@@ -86,18 +86,39 @@ module Banco
       end
     end
 
-    describe ':first_direct built-in' do
-      subject(:fmt) { described_class[:first_direct] }
+    describe ':bank_account built-in' do
+      subject(:fmt) { described_class[:bank_account] }
 
       it 'is registered' do
-        expect(described_class.names).to include(:first_direct)
+        expect(described_class.names).to include(:bank_account)
       end
 
       it 'has no type column' do
         expect(fmt.type_col).to be_nil
       end
 
-      it 'maps credit and debit to the same column (signed amount, from end)' do
+      it 'maps credit and debit to second-to-last column (signed amount)' do
+        expect(fmt.credit_col).to eq(-2)
+        expect(fmt.debit_col).to eq(-2)
+      end
+
+      it 'uses a 4-digit year date format' do
+        expect(fmt.date_fmt).to eq('%d/%m/%Y')
+      end
+    end
+
+    describe ':credit_card built-in' do
+      subject(:fmt) { described_class[:credit_card] }
+
+      it 'is registered' do
+        expect(described_class.names).to include(:credit_card)
+      end
+
+      it 'has no type column' do
+        expect(fmt.type_col).to be_nil
+      end
+
+      it 'maps credit and debit to second-to-last column (signed amount)' do
         expect(fmt.credit_col).to eq(-2)
         expect(fmt.debit_col).to eq(-2)
       end

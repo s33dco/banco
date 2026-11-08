@@ -71,15 +71,38 @@ banco --file export.csv --header --prefix-length 6
 | `legacy` | `%d/%m/%y` | date, description, type, credit, debit | Default — Barclays-style, separate money-in / money-out columns |
 | `split_columns` | `%d/%m/%Y` | date, description, type, credit, debit | Like `legacy` with a 4-digit year |
 | `signed_amount` | `%Y-%m-%d` | date, description, amount | Single signed amount column, no type column |
-| `first_direct` | `%d/%m/%Y` | date, description, amount, reference/balance | First Direct exports — signed amount, trailing column ignored. Tolerates unquoted commas in descriptions. |
+| `bank_account` | `%d/%m/%Y` | date, description, amount, balance | First Direct current account exports — signed amount, balance column ignored. |
+| `credit_card` | `%d/%m/%Y` | date, description, amount, reference | First Direct credit card exports — signed amount, reference column ignored. Tolerates unquoted commas in descriptions. |
+
+### Column ordering
+
+`bank_account` and `credit_card` both use `Date | Description | Amount | trailing column`:
+
+```
+Date        Description                    Amount    Balance/Reference
+07/10/2026  SAINSBURYS S/MKTS LEWES ROAD   -22.05    72.73
+07/10/2026  MARLEY EI  Loan/rent           450.00    1093.70
+```
+
+The trailing column (Balance or Reference) is always ignored. The Amount column is read
+from the **second-to-last** position, so unquoted commas inside a description (which
+can appear in credit card exports) do not shift the Amount value.
+
+`legacy` and `split_columns` use `Date | Description | Type | Credit | Debit`:
+
+```
+Date        Description             Type      Credit    Debit
+21/09/17    Incoming Transaction    credit    12.34
+21/09/17    Outgoing Transaction    Purchase            12.34
+```
 
 ### Signed amount columns
 
 When a format maps `credit_column` and `debit_column` to the **same** column
-(as `signed_amount` does), that column is read as a single **signed** amount:
-positive values are treated as money in (credit) and negative values as money
-out (debit). Formats with separate credit and debit columns (like `legacy` and
-`split_columns`) read each column directly.
+(as `signed_amount`, `bank_account`, and `credit_card` do), that column is read as
+a single **signed** amount: positive values are money in (credit) and negative
+values are money out (debit). Formats with separate columns (`legacy`, `split_columns`)
+read each column directly.
 
 ### Custom formats
 

@@ -57,7 +57,15 @@ module Banco
     date_format        '%Y-%m-%d'
   end
 
-  BankFormat.define(:first_direct) do
+  BankFormat.define(:bank_account) do
+    date_column 0
+    description_column 1
+    credit_column(-2)
+    debit_column(-2)
+    date_format '%d/%m/%Y'
+  end
+
+  BankFormat.define(:credit_card) do
     date_column 0
     description_column 1
     credit_column(-2)
