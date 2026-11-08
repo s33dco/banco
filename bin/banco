@@ -40,12 +40,12 @@ module Banco
         name = File.basename(options[:file], '.csv')
         path = "#{name}_summary.csv"
         fmt.save_summary_to_file(path)
-        puts "\n\nfile saved as #{path}\n\n"
+        puts "\n\nfile saved as #{File.expand_path(path)}\n\n"
       when 't'
         name = File.basename(options[:file], '.csv')
         path = "#{name}_transactions.csv"
         fmt.save_transactions_to_file(path)
-        puts "\n\nfile saved as #{path}\n\n"
+        puts "\n\nfile saved as #{File.expand_path(path)}\n\n"
       when 'l'
         options[:file] = FilePicker.pick
         transactions = Parser.new(options[:file], skip_header: options[:skip_header],
