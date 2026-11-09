@@ -45,7 +45,7 @@ module Banco
     end
 
     it 'date range spans the statement period' do
-      expect(formatter.date_range).to eq('(21/09/17 - 21/09/17) — 0 days')
+      expect(formatter.date_range).to eq('(21/09/17 - 21/09/17) — 1 day')
     end
 
     it 'bottom_line output labels surplus' do
