@@ -134,29 +134,6 @@ Banco's default (`--bank legacy`) expects columns in this order:
 
 Header rows are auto-detected and skipped. Pass `--header` explicitly to suppress the warning. Any columns beyond the fifth are ignored.
 
-## Where metaprogramming was used — and where it was not
-
-**Used:**
-
-- **`inherited` hook** (`Formatter::Base`) — each formatter subclass self-registers in a central registry. `--format` validation and `--help` output both read from the same registry, so they can never drift apart.
-- **`instance_eval`** (`BankFormat.define`) — builds a column-mapping configuration object from a concise DSL block. The block runs in the context of a fresh `BankFormat` instance, so DSL methods (`date_column`, `credit_column`, etc.) are just setters. No `method_missing`, no `define_method`, no runtime method generation.
-
-**Deliberately not used:**
-
-- **`method_missing`** for `report.groceries`-style accessors — fragile, hard to test, no editor support.
-- **`define_method`** to generate per-category display methods — same reasons; a Hash already models the grouped data cleanly.
-
-## Development
-
-```sh
-git clone https://github.com/s33dco/banco
-cd banco
-bundle install
-bundle exec rake   # runs specs + RuboCop
-```
-
-CI runs the full suite against Ruby 3.3 and 3.4 on every push.
-
 ## Licence
 
 MIT — see [LICENSE](LICENSE).
