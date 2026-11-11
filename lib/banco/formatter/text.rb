@@ -113,7 +113,8 @@ module Banco
         first = @report.all_transactions.first
         last_t = @report.all_transactions.last
         days = (first.parsed_date - last_t.parsed_date).to_i.abs + 1 if first&.parsed_date && last_t&.parsed_date
-        day_str = days ? " — #{days} #{days == 1 ? 'day' : 'days'}" : ''
+        day_label = days == 1 ? 'day' : 'days'
+        day_str = days ? " — #{days} #{day_label}" : ''
         "(#{last_t&.date} - #{first&.date})#{day_str}"
       end
 
