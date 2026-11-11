@@ -2,10 +2,11 @@
 
 Gem::Specification.new do |s|
   s.name         = 'banco'
-  s.version      = '2.0.0'
+  s.version      = '2.0.1'
   s.licenses     = ['MIT']
   s.summary      = 'Summarise bank statement CSV files from the command line'
-  s.description  = File.read(File.join(File.dirname(__FILE__), 'README.md'))
+  s.description  = 'Summarise bank statement CSV files from the command line. ' \
+                   'Supports multiple bank CSV formats, date filtering, and text/JSON/CSV output.'
   s.author       = 's33d'
   s.email        = 'code@s33d.co'
   s.files = Dir['{bin,lib}/**/*'] + %w[LICENSE README.md CHANGELOG.md]
